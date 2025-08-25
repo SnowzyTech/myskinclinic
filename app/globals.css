@@ -67,6 +67,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Added margin and padding reset to prevent any default browser spacing */
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Added html reset to ensure no default margins */
+  html {
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -166,6 +175,6 @@
   animation-delay: 0.5s;
 }
 
-.font { 
+.font {
   font-family: miller-display, serif;
 }

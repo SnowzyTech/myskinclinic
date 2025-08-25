@@ -269,6 +269,36 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Skin Concern Section - Full Width */}
+      <section className="pb-5 bg-card">
+        <ScrollAnimation>
+          <div className="relative w-full h-[80vh] min-h-[600px] overflow-hidden">
+            <Image
+              src="/images/skin-concern.png"
+              alt="Skin Concern Analysis - Before and After Treatment Comparison"
+              fill
+              className="object-cover w-full"
+            />
+          </div>
+          {/* Content Overlay */}
+          <div className="flex flex-col items-center justify-center md:flex-row md:justify-end md:items-end pt-3">
+            <div className="px-4 gap-1 text-center md:text-left">
+              <h2 className=" lg:text-2xl md:text-center text-xl font-light mb-8 text-primary-foregroun md:py-6  py-1 px-5 inline-block">
+                Do you have a Skin Concern?
+              </h2>
+              <Link href="/contact">
+                <Button
+                  size="lg"
+                  className="border-2 bg-card rounded-none text-primary hover:bg-background px-12 md:py-4 pt-0 text-lg font-medium tracking-wide mt-4"
+                >
+                  YES! PLEASE HELP
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </ScrollAnimation>
+      </section>
+
       {/* Bio Remodelling Section - Full Width */}
       <section className="py-0 bg-card">
         <ScrollAnimation delay={200}>
