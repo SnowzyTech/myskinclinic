@@ -59,7 +59,7 @@ const SignInPage = () => {
       <div className="max-w-md w-full mx-4">
         <Card>
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-background border rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl text-primary">Welcome Back</CardTitle>
@@ -68,7 +68,7 @@ const SignInPage = () => {
           <CardContent>
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
-                <Label htmlFor="email" className="flex items-center gap-1 text-gray-600 pb-1 pt-3">
+                <Label htmlFor="email" className="flex items-center gap-1  text-gray-600 pb-2 pt-3">
                   <Mail className="w-4 h-4" />
                   Email Address
                 </Label>
@@ -84,7 +84,7 @@ const SignInPage = () => {
               </div>
 
               <div>
-                <Label htmlFor="password" className="flex items-center gap-1 text-gray-600 pb-1 pt-3">
+                <Label htmlFor="password" className="flex items-center gap-1 text-gray-600 pb-2 pt-3">
                   <Lock className="w-4 h-4" />
                   Password
                 </Label>
@@ -99,7 +99,7 @@ const SignInPage = () => {
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full bg-gray-800 hover:bg-gray-950" disabled={loading}>
+              <Button type="submit" size="lg" className="w-full border bg-background hover:bg-background/100" disabled={loading}>
                 {loading ? "Signing In..." : "Sign In"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -108,7 +108,7 @@ const SignInPage = () => {
             <Separator className="my-6" />
 
             <div className="text-center">
-              <p className="text-gray-600">
+              <p className="text-primary">
                 Don't have an account?{" "}
                 <Link href="/auth/signup" className="text-primary hover:text-gray-600 font-medium">
                   Sign up here
@@ -116,11 +116,7 @@ const SignInPage = () => {
               </p>
             </div>
 
-            {/* <div className="mt-6 text-center text-sm text-gray-500">
-              <p>Demo user credentials:</p>
-              <p>Email: user@example.com</p>
-              <p>Password: password123</p>
-            </div> */}
+          
           </CardContent>
         </Card>
       </div>

@@ -85,20 +85,20 @@ const SignUpPage = () => {
   }
 
   return (
-    <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full mx-4">
+    <div className="pt-16 min-h-[50vh] bg-background flex items-center justify-center">
+      <div className="max-w-md w-full mx-4 my-4">
         <Card>
-          <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CardHeader className="text-center -mt-3">
+            <div className="w-16 h-16 bg-background border rounded-full flex items-center justify-center mx-auto mb-4">
               <User className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl text-gray-900">Create Account</CardTitle>
+            <CardTitle className="text-2xl text-primary">Create Account</CardTitle>
             <p className="text-gray-600">Join SkinClinic for exclusive offers and updates</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignUp} className="space-y-4">
               <div>
-                <Label htmlFor="fullName" className="flex items-center gap-2">
+                <Label htmlFor="fullName" className="pb-2 flex items-center gap-2">
                   <User className="w-4 h-4" />
                   Full Name
                 </Label>
@@ -113,7 +113,7 @@ const SignUpPage = () => {
               </div>
 
               <div>
-                <Label htmlFor="email" className="flex items-center gap-2">
+                <Label htmlFor="email" className="pb-2 flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   Email Address
                 </Label>
@@ -128,7 +128,7 @@ const SignUpPage = () => {
               </div>
 
               <div>
-                <Label htmlFor="password" className="flex items-center gap-2">
+                <Label htmlFor="password" className="pb-2 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Password
                 </Label>
@@ -143,7 +143,7 @@ const SignUpPage = () => {
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword" className="flex items-center gap-2">
+                <Label htmlFor="confirmPassword" className="pb-2 flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Confirm Password
                 </Label>
@@ -157,7 +157,7 @@ const SignUpPage = () => {
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full bg-rose-500 hover:bg-rose-600" disabled={loading}>
+              <Button type="submit" size="lg" className="w-full border bg-background hover:bg-background/100" disabled={loading}>
                 {loading ? "Creating Account..." : "Create Account"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -166,9 +166,9 @@ const SignUpPage = () => {
             <Separator className="my-6" />
 
             <div className="text-center">
-              <p className="text-gray-600">
+              <p className="text-primary">
                 Already have an account?{" "}
-                <Link href="/auth/signin" className="text-rose-500 hover:text-rose-600 font-medium">
+                <Link href="/auth/signin" className="text-primary/100 rounded-sm border p-3 bg-background hover:text-primary/100 font-medium">
                   Sign in here
                 </Link>
               </p>
