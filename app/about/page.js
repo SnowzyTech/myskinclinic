@@ -455,7 +455,7 @@ const AboutPage = () => {
                                 value={formData.full_name}
                                 onChange={handleInputChange}
                                 required
-                                className="bg-gray-300 text-foreground border-border"
+                                className="bg-background text-foreground border-border"
                               />
                             </div>
                             <div className="grid gap-2">
@@ -467,7 +467,7 @@ const AboutPage = () => {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 required
-                                className="bg-gray-300 text-foreground border-border"
+                                className="bg-background text-foreground border-border"
                               />
                             </div>
                           </div>
@@ -481,7 +481,7 @@ const AboutPage = () => {
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 required
-                                className="bg-gray-300 text-foreground border-border"
+                                className="bg-background text-foreground border-border"
                               />
                             </div>
                             <div className="grid gap-2">
@@ -492,7 +492,7 @@ const AboutPage = () => {
                                 onValueChange={(value) => handleSelectChange("position", value)}
                                 required
                               >
-                                <SelectTrigger className="w-full bg-gray-300 text-foreground border-border">
+                                <SelectTrigger className="w-full bg-background text-foreground border-border">
                                   <SelectValue placeholder="Select a position" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-card text-foreground border-border">
@@ -516,7 +516,7 @@ const AboutPage = () => {
                               onChange={handleInputChange}
                               required
                               rows={5}
-                              className="bg-gray-300 text-foreground border-border"
+                              className="bg-background text-foreground border-border"
                             />
                           </div>
 
