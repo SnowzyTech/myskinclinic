@@ -60,7 +60,7 @@ const BlogPage = () => {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center bg-card">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-rose-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading blog posts...</p>
         </div>
       </div>
@@ -95,14 +95,14 @@ const BlogPage = () => {
           
         ></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto bg-background">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 placeholder="Search blog posts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white/90 backdrop-blur-sm border-gray-200 shadow-sm"
+                className="pl-10 bg-background border shadow-sm"
               />
             </div>
           </div>
@@ -115,7 +115,7 @@ const BlogPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-sm">
+              <div className="bg-background rounded-2xl p-12 shadow-sm">
                 <p className="text-gray-600 text-lg">
                   {searchTerm ? "No blog posts found matching your search." : "No blog posts available."}
                 </p>
@@ -147,9 +147,9 @@ const BlogPage = () => {
                       {formatDate(post.created_at)}
                     </div>
 
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">{post.title}</h3>
+                    <h3 className="text-xl font-semibold text-primary mb-3 line-clamp-2">{post.title}</h3>
 
-                    <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
+                    <p className="text-primary mb-4 line-clamp-3">{post.excerpt}</p>
 
                     <Link
                       href={`/blog/${post.slug}`}
@@ -181,9 +181,9 @@ const BlogPage = () => {
           <div className="max-w-md mx-auto flex gap-4">
             <Input
               placeholder="Enter your email"
-              className="bg-white/90 backdrop-blur-sm border-white/20 text-gray-900 placeholder:text-gray-500"
+              className="bg-background backdrop-blur-sm border-white/20 text-gray-900 placeholder:text-gray-500"
             />
-            <button className="bg-white text-primary px-8 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors whitespace-nowrap">
+            <button className="bg-background border text-primary px-8 py-2 rounded-md font-medium hover:bg-gray-100 transition-colors whitespace-nowrap">
               Subscribe
             </button>
           </div>

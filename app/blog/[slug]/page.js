@@ -75,7 +75,7 @@ const BlogPostPage = () => {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center bg-card">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-rose-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading blog post...</p>
         </div>
       </div>
@@ -132,11 +132,11 @@ const BlogPostPage = () => {
               </Button>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-primary mb-6">{post.title}</h1>
 
             <div className="prose prose-lg max-w-none">
               {post.content.split("\n").map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+                <p key={index} className="mb-4 text-primary/100 leading-relaxed">
                   {paragraph}
                 </p>
               ))}
@@ -147,7 +147,7 @@ const BlogPostPage = () => {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Articles</h2>
+            <h2 className="text-2xl font-bold text-primary/50 mb-8">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
                 <Card key={relatedPost.id} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -160,11 +160,11 @@ const BlogPostPage = () => {
                     />
                   </div>
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{relatedPost.title}</h3>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{relatedPost.excerpt}</p>
+                    <h3 className="font-semibold text-primary/50 mb-2 line-clamp-2">{relatedPost.title}</h3>
+                    <p className="text-primary/40 text-sm mb-3 line-clamp-2">{relatedPost.excerpt}</p>
                     <Link
                       href={`/blog/${relatedPost.slug}`}
-                      className="text-rose-500 hover:text-rose-600 text-sm font-medium"
+                      className="text-primary-foreground  text-sm font-medium"
                     >
                       Read More →
                     </Link>
