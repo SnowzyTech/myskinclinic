@@ -268,9 +268,9 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Dr. Sarah Johnson",
-                role: "Lead Aesthetician & Founder",
-                image: "/images/sarah.jpg",
+                name: "Mrs Chisom Geraldine",
+                role: "DIrectorr",
+                image: "/images/director.jpg",
                 bio: "With over 15 years of experience in dermatology and aesthetic treatments, Dr. Johnson founded MySkin to provide world-class aesthetic solutions.",
               },
               {
