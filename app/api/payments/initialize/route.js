@@ -14,6 +14,10 @@ export async function POST(request) {
       cart_items: metadata?.cart_items || [],
     }
 
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+
     const response = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
       headers: {
@@ -25,7 +29,7 @@ export async function POST(request) {
         amount: Math.round(amount), // Ensure amount is an integer
         reference,
         metadata: enhancedMetadata,
-        callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/callback`,
+        callback_url: `${baseUrl}/payment/callback`,
       }),
     })
 
