@@ -6,7 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle, Award, Users } from 'lucide-react'
+import { CheckCircle, Award, Users } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import ScrollAnimation from "@/components/scroll-animation"
 
@@ -22,7 +22,7 @@ const HomePage = () => {
     "/images/aesthetics9.jpg",
     "/images/aesthetics1.jpg",
     "/images/aesthetics10.jpg",
-     "/images/aesthetics3.jpg",
+    "/images/aesthetics3.jpg",
   ]
 
   // Age-specific content with images
@@ -92,7 +92,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="pt-16 bg-background overflow-x-hidden">
+    <div className="pt-16 bg-background w-full overflow-x-hidden">
       {/* Hero Section - Full Width with Carousel */}
       <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
         {/* Image Carousel */}
@@ -269,40 +269,10 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Skin Concern Section - Full Width */}
-      <section className="pb-5 pr-4 bg-card">
-        <ScrollAnimation>
-          <div className="relative w-full h-[80vh] min-h-[600px] overflow-hidden">
-            <Image
-              src="/images/skin-concern.png"
-              alt="Skin Concern Analysis - Before and After Treatment Comparison"
-              fill
-              className="object-cover"
-            />
-          </div>
-          {/* Content Overlay */}
-          <div className="flex flex-col items-center justify-center md:flex-row md:justify-end md:items-end pt-3">
-            <div className="px-4 gap-1 text-center md:text-left">
-              <h2 className=" lg:text-2xl md:text-center text-xl font-light mb-8 text-primary-foregroun md:py-6  py-1 px-5 inline-block">
-                Do you have a Skin Concern?
-              </h2>
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  className="border-2 bg-card rounded-none text-primary hover:bg-background px-12 md:py-4 pt-0 text-lg font-medium tracking-wide mt-4"
-                >
-                  YES! PLEASE HELP
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </ScrollAnimation>
-      </section>
-
       {/* Bio Remodelling Section - Full Width */}
       <section className="py-0 bg-card">
         <ScrollAnimation delay={200}>
-          <div className="relative max-w-[66rem] lg:max-w-[70rem] mx-auto h-[80vh] min-h-[600px] overflow-hidden bg-black">
+          <div className="relative w-full h-[80vh] min-h-[600px] overflow-hidden bg-black">
             <Image
               src="/images/bio-modelling.jpg"
               alt="Bio Remodelling Treatment - Beautiful Woman Portrait"
@@ -386,12 +356,7 @@ const HomePage = () => {
             <ScrollAnimation delay={200}>
               <div className="space-y-6">
                 <div className="relative h-96 rounded-lg overflow-hidden">
-                  <Image
-                    src="/images/skinanalysis.jpg"
-                    alt="Skin Analysis"
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src="/images/skinanalysis.jpg" alt="Skin Analysis" fill className="object-cover" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-semibold text-foreground mb-3">Advanced Skin Analysis</h3>

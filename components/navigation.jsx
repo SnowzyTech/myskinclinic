@@ -1,43 +1,94 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { Menu, X, ShoppingCart, User, LogOut } from 'lucide-react'
-import { useCart } from '@/contexts/cart-context'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { Menu, X, ShoppingCart, User, LogOut, ChevronDown } from "lucide-react"
+import { useCart } from "@/contexts/cart-context"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { supabase } from "@/lib/supabase"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu"
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isTreatmentsOpen, setIsTreatmentsOpen] = useState(false)
   const { items } = useCart()
   const pathname = usePathname()
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
 
+  const treatmentCategories = [
+    {
+      id: "aesthetic-dermatology",
+      name: "Aesthetic Dermatology",
+      icon: "✨",
+    },
+    {
+      id: "laser-treatments",
+      name: "Laser Treatments",
+      icon: "🔬",
+    },
+    {
+      id: "body-contouring",
+      name: "Body Contouring",
+      icon: "💪",
+    },
+    {
+      id: "hair-restoration",
+      name: "Hair Restoration",
+      icon: "💇",
+    },
+    {
+      id: "injectable-treatments",
+      name: "Injectable Treatments",
+      icon: "💉",
+    },
+    {
+      id: "wellness-therapy",
+      name: "Wellness & Therapy",
+      icon: "🌿",
+    },
+    {
+      id: "specialized-procedures",
+      name: "Specialized Procedures",
+      icon: "🎯",
+    },
+    {
+      id: "spa-services",
+      name: "Spa Services",
+      icon: "🧘",
+    },
+    {
+      id: "teeth-whitening",
+      name: "Teeth Whitening",
+      icon: "🦷",
+    },
+  ]
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   useEffect(() => {
     // Get initial session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
       setUser(session?.user ?? null)
       setLoading(false)
     }
@@ -45,12 +96,12 @@ export default function Navigation() {
     getSession()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
 
     return () => subscription.unsubscribe()
   }, [])
@@ -60,60 +111,87 @@ export default function Navigation() {
   }
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/treatments', label: 'Treatments' },
-    { href: '/products', label: 'Products' },
-    { href: '/booking', label: 'Book' },
-    { href: '/contact', label: 'Contact' },
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/treatments", label: "Treatments", hasDropdown: true },
+    { href: "/products", label: "Products" },
+    { href: "/blog", label: "Blog" }, // Added blog link to navigation
+    { href: "/booking", label: "Book" },
+    { href: "/contact", label: "Contact" },
   ]
 
   const isActiveLink = (href) => {
-    if (href === '/') {
-      return pathname === '/'
+    if (href === "/") {
+      return pathname === "/"
     }
     return pathname.startsWith(href)
   }
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled 
-        ? 'bg-background backdrop-blur-md border-b border-border shadow-sm' 
-        : 'bg-background backdrop-blur-sm'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-background backdrop-blur-md border-b border-border shadow-sm" : "bg-background backdrop-blur-sm"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src="/images/logo2.jpg"
-                alt="MySkin Logo"
-                fill
-                className="object-cover"
-                priority
-              />
+              <Image src="/images/logo2.jpg" alt="MySkin Logo" fill className="object-cover" priority />
             </div>
-             <div className="flex flex-col pt-2">
-                <span className="text-xs text-muted-foreground">AESTHETIC CLINICS</span>
-                <span className="text-[7px] text-gray-400">Healthy skin more confident you are</span>
-              </div>
+            <div className="flex flex-col pt-2">
+              <span className="text-xs text-muted-foreground">AESTHETIC CLINICS</span>
+              <span className="text-[7px] text-gray-400">Healthy skin more confident you are</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1 md:space-x-1 lg:space-x-5">
             {navLinks.map((link) => (
               <div key={link.href} className="relative">
-                <Link
-                  href={link.href}
-                  className={`px-3 py-2 rounded-md font-medium transition-all duration-200 block ${
-                    isActiveLink(link.href) 
-                      ? 'text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513]' 
-                      : 'text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]'
-                  }`}
-                >
-                  {link.label}
-                </Link>
+                {link.hasDropdown ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      className={`flex items-center px-3 py-2 rounded-md font-medium transition-all duration-200 ${
+                        isActiveLink(link.href)
+                          ? "text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513]"
+                          : "text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56 bg-background border-border">
+                      <DropdownMenuItem asChild>
+                        <Link href="/treatments" className="flex items-center w-full">
+                          <span className="mr-2">🏥</span>
+                          All Treatments
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {treatmentCategories.map((category) => (
+                        <DropdownMenuItem key={category.id} asChild>
+                          <Link href={`/treatments?category=${category.id}`} className="flex items-center w-full">
+                            <span className="mr-2">{category.icon}</span>
+                            {category.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className={`px-3 py-2 rounded-md font-medium transition-all duration-200 block ${
+                      isActiveLink(link.href)
+                        ? "text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513]"
+                        : "text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )}
                 {/* Active indicator underline */}
                 {isActiveLink(link.href) && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c19a88] light:bg-[#8b4513] rounded-full" />
@@ -125,7 +203,7 @@ export default function Navigation() {
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
-            
+
             {/* User Authentication */}
             {loading ? (
               <div className="w-5 h-5 animate-pulse bg-muted rounded-full" />
@@ -136,7 +214,7 @@ export default function Navigation() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <div className="px-2 py-1.5 text-sm font-medium text-foreground border-b border-border">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    {user.user_metadata?.full_name || user.email?.split("@")[0] || "User"}
                   </div>
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="flex items-center">
@@ -170,7 +248,7 @@ export default function Navigation() {
 
             <Link
               href="/cart"
-              className="relative text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] p-2 rounded-md transition-all duration-200"
+              className="relative text-foreground hover:text-[#c19a88] light:hover:text-[#8b4513] transition-colors duration-200"
             >
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
@@ -210,24 +288,65 @@ export default function Navigation() {
             <div className="px-2 pt-4 pb-3 space-y-5 bg-background/95 backdrop-blur-md border-t border-border h-[90vh]">
               {navLinks.map((link) => (
                 <div key={link.href} className="relative">
-                  <Link
-                    href={link.href}
-                    className={`block px-3 py-2 rounded-md transition-colors duration-200 ${
-                      isActiveLink(link.href) 
-                        ? 'text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513] font-medium' 
-                        : 'text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]'
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
+                  {link.hasDropdown ? (
+                    <div>
+                      <button
+                        onClick={() => setIsTreatmentsOpen(!isTreatmentsOpen)}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-md transition-colors duration-200 ${
+                          isActiveLink(link.href)
+                            ? "text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513] font-medium"
+                            : "text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]"
+                        }`}
+                      >
+                        {link.label}
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${isTreatmentsOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {isTreatmentsOpen && (
+                        <div className="mt-2 ml-4 space-y-2">
+                          <Link
+                            href="/treatments"
+                            className="block px-3 py-2 text-sm text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] rounded-md transition-colors duration-200"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <span className="mr-2">🏥</span>
+                            All Treatments
+                          </Link>
+                          {treatmentCategories.map((category) => (
+                            <Link
+                              key={category.id}
+                              href={`/treatments?category=${category.id}`}
+                              className="block px-3 py-2 text-sm text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] rounded-md transition-colors duration-200"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <span className="mr-2">{category.icon}</span>
+                              {category.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={`block px-3 py-2 rounded-md transition-colors duration-200 ${
+                        isActiveLink(link.href)
+                          ? "text-[#c19a88] bg-[#3a3a3a] dark:bg-[#3a3a3a] light:bg-[#d4c4b0] light:text-[#8b4513] font-medium"
+                          : "text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513]"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                   {/* Mobile active indicator */}
                   {isActiveLink(link.href) && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#c19a88] light:bg-[#8b4513] rounded-r-full" />
                   )}
                 </div>
               ))}
-              
+
               {/* Mobile User Menu */}
               {loading ? (
                 <div className="px-3 py-2">
@@ -236,9 +355,9 @@ export default function Navigation() {
               ) : user ? (
                 <>
                   <div className="px-3 py-2 text-foreground font-medium border-t border-border">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    {user.user_metadata?.full_name || user.email?.split("@")[0] || "User"}
                   </div>
-                  
+
                   {user.email === "admin@skinclinic.com" && (
                     <Link
                       href="/admin/dashboard"

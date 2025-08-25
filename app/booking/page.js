@@ -120,7 +120,16 @@ Please confirm my appointment. Thank you!`
         description: "Redirecting you to WhatsApp to confirm your appointment.",
       })
 
-      window.open(whatsappUrl, "_blank")
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+      if (isIOS || isSafari) {
+        // For iOS devices, use window.location.href instead of window.open
+        window.location.href = whatsappUrl
+      } else {
+        // For Android and other devices, use window.open
+        window.open(whatsappUrl, "_blank")
+      }
     } catch (error) {
       console.error("Booking error:", error)
       toast({
@@ -260,7 +269,7 @@ Please confirm my appointment. Thank you!`
                         <SelectTrigger className="bg-card text-primary">
                           <SelectValue placeholder="Select time" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background">
                           <SelectItem value="09:00">9:00 AM</SelectItem>
                           <SelectItem value="10:00">10:00 AM</SelectItem>
                           <SelectItem value="11:00">11:00 AM</SelectItem>
@@ -314,7 +323,7 @@ Please confirm my appointment. Thank you!`
                     </div>
                     <div>
                       <h4 className="font-semibold text-primary">Consultation</h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-primary/70 text-sm">
                         We'll assess your skin and discuss your concerns and goals.
                       </p>
                     </div>
@@ -325,7 +334,9 @@ Please confirm my appointment. Thank you!`
                     </div>
                     <div>
                       <h4 className="font-semibold text-primary">Treatment Plan</h4>
-                      <p className="text-gray-600 text-sm">We'll create a personalized treatment plan just for you.</p>
+                      <p className="text-primary/70 text-sm">
+                        We'll create a personalized treatment plan just for you.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
@@ -334,7 +345,7 @@ Please confirm my appointment. Thank you!`
                     </div>
                     <div>
                       <h4 className="font-semibold text-primary">Professional Treatment</h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-primary/70 text-sm">
                         Enjoy your relaxing treatment with our expert aestheticians.
                       </p>
                     </div>
@@ -349,16 +360,16 @@ Please confirm my appointment. Thank you!`
                 <CardContent className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Phone className="w-5 h-5 text-primary" />
-                    <span className="text-gray-600">+2348038905589</span>
+                    <span className="text-primary/70">+2348038905589</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-primary" />
-                    <span className="text-gray-600">info@skinclinic.com</span>
+                    <span className="text-primary/70">info@skinclinic.com</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <MessageSquare className="w-5 h-5 text-primary mt-0.5" />
                     <div>
-                      <p className="text-gray-600">WhatsApp: +23480389055890</p>
+                      <p className="text-gray-600">WhatsApp: +2348038905589</p>
                       <p className="text-gray-500 text-sm">Available 9 AM - 6 PM, Mon-Sat</p>
                     </div>
                   </div>
@@ -369,7 +380,7 @@ Please confirm my appointment. Thank you!`
                 <CardHeader>
                   <CardTitle className="text-xl text-primary">Booking Policy</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 text-sm text-gray-600">
+                <CardContent className="space-y-2 text-sm text-primary/95">
                   <p>• Please arrive 15 minutes before your appointment</p>
                   <p>• 24-hour cancellation notice required</p>
                   <p>• Consultation fee may apply for first-time clients</p>

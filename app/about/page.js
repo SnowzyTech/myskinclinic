@@ -269,9 +269,9 @@ const AboutPage = () => {
             {[
               {
                 name: "Mrs Chisom Geraldine",
-                role: "DIrectorr",
+                role: "DIrector",
                 image: "/images/director.jpg",
-                bio: "With over 15 years of experience in dermatology and aesthetic treatments, Dr. Johnson founded MySkin to provide world-class aesthetic solutions.",
+                bio: "Geraldine is a Pharmacist with over 9 years of experience and an MSc in Clinical Pharmacy. She is a certified Advanced Aesthetics Specialist and Licensed Medical Aesthetics Practitioner with expertise in facials, body treatments, injectables, and laser therapies. Passionate and detail-oriented, she believes everyone deserves confidence in their own skin.",
               },
               {
                 name: "Maria Rodriguez",

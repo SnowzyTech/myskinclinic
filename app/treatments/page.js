@@ -73,12 +73,6 @@ const TreatmentsPage = () => {
       icon: "🎯",
     },
     {
-      id: "spa-services",
-      name: "Spa Services",
-      description: "Relaxation and beauty treatments",
-      icon: "🧘",
-    },
-    {
       id: "teeth-whitening",
       name: "Teeth Whitening",
       description: "Professional teeth whitening and dental aesthetics",
@@ -150,7 +144,6 @@ const TreatmentsPage = () => {
           "injectable-treatments": ["After Care", "Skincare", "Recovery"],
           "wellness-therapy": ["Wellness", "Supplements", "Recovery"],
           "specialized-procedures": ["Professional", "After Care", "Recovery"],
-          "spa-services": ["Skincare", "Body Care", "Wellness"],
         }
 
         const relevantCategories = categoryMapping[treatment.category] || ["Skincare"]
@@ -403,7 +396,7 @@ const TreatmentsPage = () => {
                       </Badge>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex justify-center items-center gap-2">
                       <Button
                         onClick={() => handleTreatmentClick(treatment)}
                         className="flex-1 bg-primary border hover:bg-primary/90 text-primary-foreground"
