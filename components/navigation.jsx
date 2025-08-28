@@ -164,10 +164,10 @@ export default function Navigation() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56 bg-background border-border">
                       <DropdownMenuItem asChild>
-                        <Link href="/treatments" className="flex items-center w-full">
+                        {/* <Link href="/treatments" className="flex items-center w-full">
                           <span className="mr-2">🏥</span>
                           All Treatments
-                        </Link>
+                        </Link> */}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {treatmentCategories.map((category) => (
@@ -305,14 +305,14 @@ export default function Navigation() {
                       </button>
                       {isTreatmentsOpen && (
                         <div className="mt-2 ml-4 space-y-2">
-                          <Link
+                          {/* <Link
                             href="/treatments"
                             className="block px-3 py-2 text-sm text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] rounded-md transition-colors duration-200"
                             onClick={() => setIsOpen(false)}
                           >
                             <span className="mr-2">🏥</span>
                             All Treatments
-                          </Link>
+                          </Link> */}
                           {treatmentCategories.map((category) => (
                             <Link
                               key={category.id}
