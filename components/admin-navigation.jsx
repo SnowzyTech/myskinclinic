@@ -62,7 +62,7 @@ const AdminNavigation = () => {
               <Image src="/images/logo2.jpg" alt="MySkin Admin" fill className="object-contain" />
             </div>
             <div className="flex flex-col">
-              <span className="lg:text-[8px] text-[6px] md:text-[7px] text-muted-foreground">MANAGEMENT PANEL</span>
+              <span className="lg:text-[10px] text-[12px] md:text-[9px] text-muted-foreground">MANAGEMENT PANEL</span>
             </div>
           </Link>
 
@@ -72,7 +72,7 @@ const AdminNavigation = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center space-x-1 text-[10px] font-medium transition-all duration-200 hover:bg-primary/10 px-3 py-2 rounded-md ${
+                className={`flex items-center space-x-1 text-[12px] font-medium transition-all duration-200 hover:bg-primary/10 px-3 py-2 rounded-md ${
                   pathname === item.href ? "text-primary bg-primary/10" : "text-foreground"
                 }`}
               >
