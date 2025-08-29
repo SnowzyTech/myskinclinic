@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Search, Calendar, Phone, Mail, MessageSquare } from "lucide-react"
+import { ArrowLeft, Search, Calendar, Phone, Mail, MessageSquare, Trash2 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import AdminNavigation from "@/components/admin-navigation"
@@ -19,6 +19,7 @@ const AdminBookingsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [loading, setLoading] = useState(true)
+  const [deletingBookingId, setDeletingBookingId] = useState(null)
   const router = useRouter()
   const { toast } = useToast()
 
@@ -88,6 +89,38 @@ const AdminBookingsPage = () => {
         description: "Failed to update booking status. Please try again.",
         variant: "destructive",
       })
+    }
+  }
+
+  const deleteBooking = async (bookingId, bookingName) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the booking for ${bookingName}? This action cannot be undone.`,
+    )
+
+    if (!confirmed) return
+
+    setDeletingBookingId(bookingId)
+
+    try {
+      const { error } = await supabase.from("bookings").delete().eq("id", bookingId)
+
+      if (error) throw error
+
+      toast({
+        title: "Booking Deleted",
+        description: `Booking for ${bookingName} has been successfully deleted.`,
+      })
+
+      fetchBookings()
+    } catch (error) {
+      console.error("Delete booking error:", error)
+      toast({
+        title: "Error",
+        description: "Failed to delete booking. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setDeletingBookingId(null)
     }
   }
 
@@ -253,6 +286,25 @@ const AdminBookingsPage = () => {
                         Mark Complete
                       </Button>
                     )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => deleteBooking(booking.id, booking.name)}
+                      disabled={deletingBookingId === booking.id}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      {deletingBookingId === booking.id ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-500 mr-1"></div>
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          Delete
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
