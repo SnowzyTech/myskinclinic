@@ -527,7 +527,7 @@ const TreatmentsPage = () => {
                           <CarouselContent className="-ml-2 md:-ml-4">
                             {recommendedProducts.map((product) => (
                               <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-4/5">
-                                <Card className="p-4 bg-background border-border">
+                                <Card className="p-4 bg-background border-border h-full">
                                   <div className="flex items-center space-x-4">
                                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                                       <Image
