@@ -270,19 +270,19 @@ const AboutPage = () => {
               {
                 name: "Mrs Chisom Geraldine",
                 role: "DIrector",
-                image: "/images/director.jpg",
+                image: "/images/director2.jpg",
                 bio: "Geraldine is a Pharmacist with over 9 years of experience and an MSc in Clinical Pharmacy. She is a certified Advanced Aesthetics Specialist and Licensed Medical Aesthetics Practitioner with expertise in facials, body treatments, injectables, and laser therapies. Passionate and detail-oriented, she believes everyone deserves confidence in their own skin.",
               },
               {
                 name: "Maria Rodriguez",
                 role: "Senior Aesthetic Specialist",
-                image: "/images/sarah.jpg",
+                image: "/images/director.jpg",
                 bio: "Maria specializes in advanced facial treatments and has helped thousands of clients achieve radiant, healthy skin through personalized care.",
               },
               {
                 name: "Jennifer Chen",
                 role: "Aesthetic Therapist",
-                image: "/images/sarah.jpg",
+                image: "/images/director.jpg",
                 bio: "Jennifer brings expertise in the latest aesthetic technologies and is passionate about helping clients feel confident in their own skin.",
               },
             ].map((member, index) => (

@@ -168,7 +168,7 @@ const AdminOrdersPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
-            <div className="flex flex-col items-start gap-11">
+            <div className="flex flex-col items-start gap-4">
               <Link href="/admin/dashboard">
                 <Button variant="outline" size="sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
@@ -198,7 +198,7 @@ const AdminOrdersPage = () => {
               <SelectTrigger className="w-full md:w-48 bg-card border-border">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background">
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
@@ -213,10 +213,10 @@ const AdminOrdersPage = () => {
             {filteredOrders.map((order) => (
               <Card key={order.id} className="bg-background border-border">
                 <CardHeader>
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start ">
                     <div>
                       <CardTitle className="text-lg text-foreground">Order #{order.id.slice(-8)}</CardTitle>
-                      <p className="text-muted-foreground">{order.user_email}</p>
+                      <p className="text-muted-foreground text-[12px] md:text-lg text-start truncate">{order.user_email}</p>
                     </div>
                     <div className="text-right">
                       <Badge
@@ -243,17 +243,24 @@ const AdminOrdersPage = () => {
                       <h4 className="font-semibold text-foreground mb-3">Order Items</h4>
                       <div className="space-y-3">
                         {order.order_items?.map((item) => (
-                          <div key={item.id} className="flex items-center space-x-3 p-3 bg-background rounded-lg">
-                            <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
-                              <Package className="w-6 h-6 text-muted-foreground" />
+                          <div
+                            key={item.id}
+                            className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 p-3 bg-background rounded-lg"
+                          >
+                            <div className="flex items-center space-x-3 flex-1">
+                              <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Package className="w-6 h-6 text-muted-foreground" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-foreground truncate">
+                                  {item.products?.name || "Product"}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Quantity: {item.quantity} × ₦{item.price}
+                                </p>
+                              </div>
                             </div>
-                            <div className="flex-1">
-                              <p className="font-medium text-foreground">{item.products?.name || "Product"}</p>
-                              <p className="text-sm text-muted-foreground">
-                                Quantity: {item.quantity} × ₦{item.price}
-                              </p>
-                            </div>
-                            <div className="text-right">
+                            <div className="text-right sm:text-right">
                               <p className="font-semibold text-foreground">
                                 ₦{(item.quantity * item.price).toFixed(2)}
                               </p>
@@ -274,7 +281,9 @@ const AdminOrdersPage = () => {
                         {order.paystack_reference && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Reference:</span>
-                            <span className="text-sm text-foreground">{order.paystack_reference}</span>
+                            <span className="text-sm text-foreground truncate max-w-[120px] sm:max-w-none">
+                              {order.paystack_reference}
+                            </span>
                           </div>
                         )}
                         <div className="flex justify-between">

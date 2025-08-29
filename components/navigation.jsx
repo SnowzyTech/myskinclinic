@@ -172,7 +172,19 @@ export default function Navigation() {
                       <DropdownMenuSeparator />
                       {treatmentCategories.map((category) => (
                         <DropdownMenuItem key={category.id} asChild>
-                          <Link href={`/treatments?category=${category.id}`} className="flex items-center w-full">
+                          <Link
+                            href={`/treatments?category=${category.id}`}
+                            className="flex items-center w-full cursor-pointer"
+                            onClick={() => {
+                              // Scroll to the specific category section after navigation
+                              setTimeout(() => {
+                                const element = document.getElementById(`category-${category.id}`)
+                                if (element) {
+                                  element.scrollIntoView({ behavior: "smooth", block: "start" })
+                                }
+                              }, 100)
+                            }}
+                          >
                             <span className="mr-2">{category.icon}</span>
                             {category.name}
                           </Link>
@@ -318,7 +330,15 @@ export default function Navigation() {
                               key={category.id}
                               href={`/treatments?category=${category.id}`}
                               className="block px-3 py-2 text-sm text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] rounded-md transition-colors duration-200"
-                              onClick={() => setIsOpen(false)}
+                              onClick={() => {
+                                setIsOpen(false)
+                                setTimeout(() => {
+                                  const element = document.getElementById(`category-${category.id}`)
+                                  if (element) {
+                                    element.scrollIntoView({ behavior: "smooth", block: "start" })
+                                  }
+                                }, 100)
+                              }}
                             >
                               <span className="mr-2">{category.icon}</span>
                               {category.name}

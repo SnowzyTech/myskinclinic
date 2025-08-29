@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 import ScrollAnimation from "@/components/scroll-animation"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 const TreatmentsPage = () => {
   const [treatments, setTreatments] = useState([])
@@ -82,6 +83,17 @@ const TreatmentsPage = () => {
 
   useEffect(() => {
     fetchTreatments()
+    const urlParams = new URLSearchParams(window.location.search)
+    const categoryParam = urlParams.get("category")
+    if (categoryParam && categoryParam !== "all") {
+      setSelectedCategory(categoryParam)
+      setTimeout(() => {
+        const element = document.getElementById(`category-${categoryParam}`)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+      }, 500)
+    }
   }, [])
 
   const fetchTreatments = async () => {
@@ -119,7 +131,6 @@ const TreatmentsPage = () => {
         .eq("treatment_id", treatmentId)
 
       if (!treatmentError && treatmentProducts && treatmentProducts.length > 0) {
-        // Filter out null products and inactive products
         const validProducts = treatmentProducts
           .map((tp) => tp.products)
           .filter((product) => product && product.is_active)
@@ -132,7 +143,6 @@ const TreatmentsPage = () => {
 
       const treatment = treatments.find((t) => t.id === treatmentId)
       if (treatment && treatment.category) {
-        // Map treatment categories to product categories
         const categoryMapping = {
           "skin-treatment": ["Skincare", "Face Care", "Anti-Aging"],
           "laser-hair-removal": ["Hair Care", "Body Care", "After Care"],
@@ -148,7 +158,6 @@ const TreatmentsPage = () => {
 
         const relevantCategories = categoryMapping[treatment.category] || ["Skincare"]
 
-        // Get products from relevant categories
         const { data: categoryProducts, error: categoryError } = await supabase
           .from("products")
           .select(`
@@ -166,7 +175,6 @@ const TreatmentsPage = () => {
           .limit(6)
 
         if (!categoryError && categoryProducts) {
-          // Filter products by relevant categories
           const filteredProducts = categoryProducts.filter(
             (product) =>
               product.categories &&
@@ -201,7 +209,6 @@ const TreatmentsPage = () => {
     if (treatment.id) {
       fetchRecommendedProducts(treatment.id)
     } else {
-      // For treatments without IDs, show some default products
       setRecommendedProducts([])
     }
   }
@@ -217,9 +224,8 @@ const TreatmentsPage = () => {
   const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId)
     setSelectedTreatment(null)
-    setShowFilters(false) // Close filters on mobile after selection
+    setShowFilters(false)
 
-    // Scroll to treatments grid with smooth animation
     setTimeout(() => {
       treatmentsGridRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -241,7 +247,6 @@ const TreatmentsPage = () => {
 
   return (
     <div className="pt-16 min-h-screen bg-background">
-      {/* Header */}
       <section
         className="relative py-16 lg:h-[50vh] md:h-[60vh] h-[70vh] flex items-center justify-center text-center bg-cover bg-center bg-no-repeat overflow-hidden"
         style={{
@@ -262,7 +267,6 @@ const TreatmentsPage = () => {
         </div>
       </section>
 
-      {/* Mobile Filter Toggle */}
       <div className="lg:hidden bg-card border-b border-border px-4 py-3">
         <Button
           onClick={() => setShowFilters(!showFilters)}
@@ -277,7 +281,6 @@ const TreatmentsPage = () => {
         </Button>
       </div>
 
-      {/* Treatment Categories - Desktop & Mobile Dropdown */}
       <section
         className={`bg-card border-b border-border transition-all duration-300 ${
           showFilters ? "block" : "hidden lg:block"
@@ -292,11 +295,11 @@ const TreatmentsPage = () => {
           </ScrollAnimation>
 
           <ScrollAnimation delay={200}>
-            {/* Desktop Grid Layout */}
             <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
               {treatmentCategories.map((category) => (
                 <button
                   key={category.id}
+                  id={`category-${category.id}`}
                   onClick={() => handleCategorySelect(category.id)}
                   className={`p-6 rounded-xl border-2 transition-all duration-300 text-left group hover:scale-105 ${
                     selectedCategory === category.id
@@ -323,11 +326,11 @@ const TreatmentsPage = () => {
               ))}
             </div>
 
-            {/* Mobile List Layout */}
             <div className="lg:hidden space-y-2">
               {treatmentCategories.map((category) => (
                 <button
                   key={category.id}
+                  id={`category-mobile-${category.id}`}
                   onClick={() => handleCategorySelect(category.id)}
                   className={`w-full p-4 rounded-lg border transition-all duration-200 text-left ${
                     selectedCategory === category.id
@@ -355,7 +358,6 @@ const TreatmentsPage = () => {
         </div>
       </section>
 
-      {/* Treatments Grid */}
       <section className="py-12" ref={treatmentsGridRef}>
         <div className="max-w-7xl h-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
@@ -427,7 +429,6 @@ const TreatmentsPage = () => {
         </div>
       </section>
 
-      {/* Price List Download Section */}
       <section className="py-12 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollAnimation>
@@ -460,7 +461,6 @@ const TreatmentsPage = () => {
         <div className="absolute bottom-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
       </section>
 
-      {/* Treatment Details Modal */}
       {selectedTreatment && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -514,48 +514,98 @@ const TreatmentsPage = () => {
                       </span>
                     )}
                   </h3>
-                  <div className="space-y-4">
-                    {recommendedProducts.length > 0 ? (
-                      recommendedProducts.map((product) => (
-                        <Card key={product.id} className="p-4 bg-background border-border">
-                          <div className="flex items-center space-x-4">
-                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted">
-                              <Image
-                                src={product.image_url || "/placeholder.svg?height=64&width=64&query=product"}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-foreground">{product.name}</h4>
-                              <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
-                              <div className="flex items-center justify-between mt-2">
-                                <span className="font-bold text-primary">₦{product.price}</span>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleAddToCart(product)}
-                                  className="bg-primary border hover:bg-primary/90 text-primary-foreground"
-                                >
-                                  <ShoppingCart className="w-4 h-4 mr-1" />
-                                  Add to Cart
-                                </Button>
+                  {recommendedProducts.length > 0 ? (
+                    <>
+                      <div className="block sm:hidden">
+                        <Carousel
+                          opts={{
+                            align: "start",
+                            loop: false,
+                          }}
+                          className="w-full"
+                        >
+                          <CarouselContent className="-ml-2 md:-ml-4">
+                            {recommendedProducts.map((product) => (
+                              <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-4/5">
+                                <Card className="p-4 bg-background border-border">
+                                  <div className="flex items-center space-x-4">
+                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                                      <Image
+                                        src={product.image_url || "/placeholder.svg?height=64&width=64&query=product"}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-semibold text-foreground truncate">{product.name}</h4>
+                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {product.description}
+                                      </p>
+                                      <div className="flex items-center justify-between mt-2">
+                                        <span className="font-bold text-primary">₦{product.price}</span>
+                                        <Button
+                                          size="sm"
+                                          onClick={() => handleAddToCart(product)}
+                                          className="bg-primary border hover:bg-primary/90 text-primary-foreground"
+                                        >
+                                          <ShoppingCart className="w-4 h-4 mr-1" />
+                                          Add
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Card>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          <CarouselPrevious className="left-0" />
+                          <CarouselNext className="right-0" />
+                        </Carousel>
+                      </div>
+
+                      <div className="hidden sm:block space-y-4">
+                        {recommendedProducts.map((product) => (
+                          <Card key={product.id} className="p-4 bg-background border-border">
+                            <div className="flex items-center space-x-4">
+                              <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted">
+                                <Image
+                                  src={product.image_url || "/placeholder.svg?height=64&width=64&query=product"}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-foreground">{product.name}</h4>
+                                <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                                <div className="flex items-center justify-between mt-2">
+                                  <span className="font-bold text-primary">₦{product.price}</span>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleAddToCart(product)}
+                                    className="bg-primary border hover:bg-primary/90 text-primary-foreground"
+                                  >
+                                    <ShoppingCart className="w-4 h-4 mr-1" />
+                                    Add to Cart
+                                  </Button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Card>
-                      ))
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-card-foreground/60">No specific products recommended for this treatment.</p>
-                        <Link href="/products">
-                          <Button variant="outline" className="mt-4 bg-background border-border">
-                            Browse All Products
-                          </Button>
-                        </Link>
+                          </Card>
+                        ))}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-card-foreground/60">No specific products recommended for this treatment.</p>
+                      <Link href="/products">
+                        <Button variant="outline" className="mt-4 bg-background border-border">
+                          Browse All Products
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -563,7 +613,6 @@ const TreatmentsPage = () => {
         </div>
       )}
 
-      {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollAnimation>
