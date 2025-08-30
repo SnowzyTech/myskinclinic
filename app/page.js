@@ -239,7 +239,7 @@ const HomePage = () => {
                   <p className="text-muted-foreground leading-relaxed mb-8">{ageContent[selectedAge].additionalText}</p>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="hidden lg:flex gap-4">
                   <Link href="/treatments">
                     <Button className="bg-primary border hover:bg-primary/90 text-primary-foreground px-8">
                       VIEW TREATMENTS
@@ -263,6 +263,19 @@ const HomePage = () => {
                   height={800}
                   className="rounded-lg shadow-2xl object-cover h-[600px] w-full md:w-full"
                 />
+
+                <div className="flex lg:hidden gap-4 mt-7 justify-start">
+                  <Link href="/treatments">
+                    <Button className="bg-primary border hover:bg-primary/90 text-primary-foreground px-8">
+                      VIEW TREATMENTS
+                    </Button>
+                  </Link>
+                  <Link href="/booking">
+                    <Button variant="outline" className="bg-transparent px-8">
+                      BOOK NOW
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </ScrollAnimation>
           </div>
