@@ -288,7 +288,7 @@ const AboutPage = () => {
             ].map((member, index) => (
               <ScrollAnimation key={index} delay={index * 100}>
                 <Card className="overflow-hidden h-full hover:shadow-lg transition-all duration-300 bg-card border-border">
-                  <div className="relative h-[490px] md:h-96">
+                  <div className="relative h-[350px] md:h-96">
                     <Image src={member.image || "/placeholder.svg"}  alt={member.name} fill className="object-cover" />
                   </div>
                   <CardContent className="p-6">

@@ -524,12 +524,12 @@ const TreatmentsPage = () => {
                           }}
                           className="w-full"
                         >
-                          <CarouselContent className="-ml-2 md:-ml-4">
+                          <CarouselContent className="-ml-1">
                             {recommendedProducts.map((product) => (
-                              <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-4/5">
-                                <Card className="p-4 bg-background border-border h-full">
-                                  <div className="flex items-center space-x-4">
-                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                              <CarouselItem key={product.id} className="pl-1 basis-full xs:basis-4/5 sm:basis-3/4">
+                                <Card className="p-3 bg-background border-border w-full h-full">
+                                  <div className="flex flex-col xs:flex-row items-start xs:items-center space-y-3 xs:space-y-0 xs:space-x-3">
+                                    <div className="relative w-full xs:w-14 h-[250px] xs:h-[250px] rounded-lg overflow-hidden bg-muted flex-shrink-0">
                                       <Image
                                         src={product.image_url || "/placeholder.svg?height=64&width=64&query=product"}
                                         alt={product.name}
@@ -537,19 +537,19 @@ const TreatmentsPage = () => {
                                         className="object-cover"
                                       />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                      <h4 className="font-semibold text-foreground truncate">{product.name}</h4>
-                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                    <div className="flex-1 min-w-0 w-full">
+                                      <h4 className="font-semibold text-sm text-foreground truncate">{product.name}</h4>
+                                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                                         {product.description}
                                       </p>
                                       <div className="flex items-center justify-between mt-2">
-                                        <span className="font-bold text-primary">₦{product.price}</span>
+                                        <span className="font-bold text-sm text-primary">₦{product.price}</span>
                                         <Button
                                           size="sm"
                                           onClick={() => handleAddToCart(product)}
-                                          className="bg-primary border hover:bg-primary/90 text-primary-foreground"
+                                          className="bg-primary border hover:bg-primary/90 text-primary-foreground text-xs px-2 py-1 h-7"
                                         >
-                                          <ShoppingCart className="w-4 h-4 mr-1" />
+                                          <ShoppingCart className="w-3 h-3 mr-1" />
                                           Add
                                         </Button>
                                       </div>
@@ -559,8 +559,8 @@ const TreatmentsPage = () => {
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          <CarouselPrevious className="left-0" />
-                          <CarouselNext className="right-0" />
+                          <CarouselPrevious className="left-0 -translate-x-1/2" />
+                          <CarouselNext className="right-0 translate-x-1/2" />
                         </Carousel>
                       </div>
 

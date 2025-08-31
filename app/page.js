@@ -236,7 +236,7 @@ const HomePage = () => {
                   <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                     {ageContent[selectedAge].description}
                   </p>
-                  <p className="text-muted-foreground leading-relaxed mb-8">{ageContent[selectedAge].additionalText}</p>
+                  <p className="text-muted-foreground leading-relaxed mb-4">{ageContent[selectedAge].additionalText}</p>
                 </div>
 
                 <div className="hidden lg:flex gap-4">
@@ -261,17 +261,17 @@ const HomePage = () => {
                   alt={`Beautiful woman in her ${selectedAge}s with glowing skin`}
                   width={500}
                   height={800}
-                  className="rounded-lg shadow-2xl object-cover h-[600px] w-full md:w-full"
+                  className="rounded-lg pt-[-10px] shadow-2xl object-cover md:h-[600px] h-[430px] w-full md:w-full"
                 />
 
-                <div className="flex lg:hidden gap-4 mt-7 justify-start">
+                <div className="flex lg:hidden md:gap-4 gap-3 mt-7 justify-start">
                   <Link href="/treatments">
-                    <Button className="bg-primary border hover:bg-primary/90 text-primary-foreground px-8">
+                    <Button className="bg-primary border hover:bg-primary/90 text-primary-foreground md:px-8 px-4">
                       VIEW TREATMENTS
                     </Button>
                   </Link>
                   <Link href="/booking">
-                    <Button variant="outline" className="bg-transparent px-8">
+                    <Button variant="outline" className="bg-transparent md:px-8 px-4">
                       BOOK NOW
                     </Button>
                   </Link>
@@ -344,7 +344,7 @@ const HomePage = () => {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="mt-6 bg-transparent border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-medium tracking-wide transition-all duration-300"
+                        className="mt-6 bg-transparent border-white text-white hover:bg-white hover:text-black md:px-8 px-3 py-4 text-lg font-medium tracking-wide transition-all duration-300"
                       >
                         GO TO BIO REMODELLING →
                       </Button>
