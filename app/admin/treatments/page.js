@@ -332,36 +332,42 @@ const AdminTreatmentsPage = () => {
     <>
       <AdminNavigation />
       <div className="pt-14 min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Header */}
-          <div className="flex justify-between md:gap-8 gap-2 items-center mb-8">
-            <div className="flex flex-col items-start gap-11">
-              <Link href="/admin/dashboard" className="bg-card text-primary">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 sm:gap-8 mb-6 sm:mb-8">
+            <div className="flex flex-col gap-4 sm:gap-6">
+              <Link href="/admin/dashboard" className="bg-card text-primary self-start">
                 <Button variant="outline" size="sm" className="bg-card rounded-sm border-border">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Button>
               </Link>
-              <div className="items-start">
-                <h1 className="text-3xl font-bold text-foreground">Manage Treatments</h1>
-                <p className="text-muted-foreground">Add, edit, and manage your treatment services</p>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Manage Treatments</h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Add, edit, and manage your treatment services
+                </p>
               </div>
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm} className="bg-primary border hover:bg-primary/90 text-primary-foreground">
-                  <Plus className="w-4 h-4 mr-4 md:mr-2" />
-                  Add Treatment
+                <Button
+                  onClick={resetForm}
+                  className="bg-primary border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  <span className="hidden xs:inline">Add Treatment</span>
+                  <span className="xs:hidden">Add</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-card max-w-4xl max-h-[90vh] overflow-y-auto border-border">
+              <DialogContent className="bg-card max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto border-border mx-4">
                 <DialogHeader>
-                  <DialogTitle className="text-card-foreground">
+                  <DialogTitle className="text-card-foreground text-lg sm:text-xl">
                     {editingTreatment ? "Edit Treatment" : "Add New Treatment"}
                   </DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   {/* Image Upload Component */}
                   <ImageUpload
                     currentImage={formData.image_url}
@@ -371,9 +377,9 @@ const AdminTreatmentsPage = () => {
                     label="Treatment Image"
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name" className="text-card-foreground">
+                      <Label htmlFor="name" className="text-card-foreground text-sm">
                         Treatment Name *
                       </Label>
                       <Input
@@ -382,11 +388,11 @@ const AdminTreatmentsPage = () => {
                         onChange={(e) => handleInputChange("name", e.target.value)}
                         placeholder="Enter treatment name"
                         required
-                        className="bg-background border-border"
+                        className="bg-background border-border text-sm"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="duration" className="text-card-foreground">
+                      <Label htmlFor="duration" className="text-card-foreground text-sm">
                         Duration (minutes) *
                       </Label>
                       <Input
@@ -396,13 +402,13 @@ const AdminTreatmentsPage = () => {
                         onChange={(e) => handleInputChange("duration", e.target.value)}
                         placeholder="60"
                         required
-                        className="bg-background border-border"
+                        className="bg-background border-border text-sm"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="description" className="text-card-foreground">
+                    <Label htmlFor="description" className="text-card-foreground text-sm">
                       Description *
                     </Label>
                     <Textarea
@@ -412,12 +418,12 @@ const AdminTreatmentsPage = () => {
                       placeholder="Describe the treatment..."
                       rows={3}
                       required
-                      className="bg-background border-border"
+                      className="bg-background border-border text-sm"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="category" className="text-card-foreground">
+                    <Label htmlFor="category" className="text-card-foreground text-sm">
                       Category *
                     </Label>
                     <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
@@ -429,7 +435,7 @@ const AdminTreatmentsPage = () => {
                           <SelectItem key={category.id} value={category.id} className="text-card-foreground">
                             <div className="flex items-center space-x-2">
                               <span>{category.icon}</span>
-                              <span>{category.name}</span>
+                              <span className="text-sm">{category.name}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -439,11 +445,11 @@ const AdminTreatmentsPage = () => {
 
                   {/* Recommended Products Selection */}
                   <div>
-                    <Label className="text-card-foreground">Recommended Products</Label>
-                    <p className="text-sm text-muted-foreground mb-3">
+                    <Label className="text-card-foreground text-sm">Recommended Products</Label>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-3">
                       Select products to recommend with this treatment
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-lg p-3 bg-background border-border">
+                    <div className="grid grid-cols-1 gap-2 max-h-32 sm:max-h-40 overflow-y-auto border rounded-lg p-3 bg-background border-border">
                       {products.map((product) => (
                         <div key={product.id} className="flex items-center space-x-2">
                           <input
@@ -453,7 +459,10 @@ const AdminTreatmentsPage = () => {
                             onChange={() => handleProductSelection(product.id)}
                             className="rounded"
                           />
-                          <Label htmlFor={`product-${product.id}`} className="text-sm cursor-pointer text-foreground">
+                          <Label
+                            htmlFor={`product-${product.id}`}
+                            className="text-xs sm:text-sm cursor-pointer text-foreground"
+                          >
                             {product.name}
                           </Label>
                         </div>
@@ -469,24 +478,24 @@ const AdminTreatmentsPage = () => {
                       onChange={(e) => handleInputChange("is_active", e.target.checked)}
                       className="rounded"
                     />
-                    <Label htmlFor="is_active" className="text-card-foreground">
+                    <Label htmlFor="is_active" className="text-card-foreground text-sm">
                       Treatment is active
                     </Label>
                   </div>
 
-                  <div className="flex justify-end space-x-2 pt-4">
+                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => setIsDialogOpen(false)}
-                      className="border-border"
+                      className="border-border w-full sm:w-auto"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="bg-background border hover:bg-primary/90 text-primary-foreground"
+                      className="bg-background border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
                     >
                       {loading ? "Saving..." : editingTreatment ? "Update Treatment" : "Add Treatment"}
                     </Button>
@@ -497,15 +506,15 @@ const AdminTreatmentsPage = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="mb-6">
-            <div className="relative max-w-md">
+          <div className="mb-4 sm:mb-6">
+            <div className="relative w-full sm:max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 type="text"
-                placeholder="Search treatments by name, description, or category..."
+                placeholder="Search treatments..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-10 bg-background border-border"
+                className="pl-10 pr-10 bg-background border-border text-sm"
               />
               {searchTerm && (
                 <Button
@@ -519,7 +528,7 @@ const AdminTreatmentsPage = () => {
               )}
             </div>
             {searchTerm && (
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                 Found {filteredTreatments.length} treatment{filteredTreatments.length !== 1 ? "s" : ""} matching "
                 {searchTerm}"
               </p>
@@ -527,12 +536,12 @@ const AdminTreatmentsPage = () => {
           </div>
 
           {/* Treatments Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredTreatments.map((treatment) => {
               const categoryInfo = getCategoryInfo(treatment.category)
               return (
                 <Card key={treatment.id} className="overflow-hidden bg-card border-border">
-                  <div className="relative h-48">
+                  <div className="relative h-40 sm:h-48">
                     <Image
                       src={treatment.image_url || "/placeholder.svg?height=200&width=300&query=treatment"}
                       alt={treatment.name}
@@ -540,40 +549,47 @@ const AdminTreatmentsPage = () => {
                       className="object-cover"
                     />
                     <div className="absolute top-2 right-2">
-                      <Badge variant={treatment.is_active ? "default" : "secondary"}>
+                      <Badge variant={treatment.is_active ? "default" : "secondary"} className="text-xs">
                         {treatment.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </div>
                   </div>
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 sm:p-4">
                     <div className="mb-2">
                       <Badge variant="outline" className="text-xs border-border">
                         <span className="mr-1">{categoryInfo.icon}</span>
-                        {categoryInfo.name}
+                        <span className="hidden sm:inline">{categoryInfo.name}</span>
+                        <span className="sm:hidden">{categoryInfo.name.split(" ")[0]}</span>
                       </Badge>
                     </div>
-                    <h3 className="text-lg font-semibold text-card-foreground mb-2 line-clamp-2">{treatment.name}</h3>
-                    <p className="text-card-foreground/70 text-sm mb-3 line-clamp-2">{treatment.description}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-card-foreground mb-2 line-clamp-2">
+                      {treatment.name}
+                    </h3>
+                    <p className="text-card-foreground/70 text-xs sm:text-sm mb-3 line-clamp-2">
+                      {treatment.description}
+                    </p>
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-sm text-muted-foreground">Duration: {treatment.duration} min</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">
+                        Duration: {treatment.duration} min
+                      </span>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(treatment)}
-                        className="flex-1 border-border"
+                        className="flex-1 border-border text-xs sm:text-sm"
                       >
-                        <Edit className="w-4 h-4 mr-1" />
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         Edit
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(treatment.id)}
-                        className="text-destructive hover:text-destructive border-border"
+                        className="text-destructive hover:text-destructive border-border sm:w-auto"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </Button>
                     </div>
                   </CardContent>

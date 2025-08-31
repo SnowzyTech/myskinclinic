@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope } from "lucide-react"
+import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope, PenTool } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AdminNavigation from "@/components/admin-navigation"
 
@@ -16,9 +16,11 @@ const AdminDashboard = () => {
     totalOrders: 0,
     totalProducts: 0,
     totalTreatments: 0,
+    totalBlogPosts: 0,
     recentApplications: [],
     recentBookings: [],
     recentOrders: [],
+    recentBlogPosts: [],
   })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -57,6 +59,9 @@ const AdminDashboard = () => {
       // Fetch treatments count
       const { count: treatmentsCount } = await supabase.from("treatments").select("*", { count: "exact", head: true })
 
+      // Fetch blog posts count
+      const { count: blogPostsCount } = await supabase.from("blog_posts").select("*", { count: "exact", head: true })
+
       // Fetch recent applications
       const { data: recentApplications } = await supabase
         .from("job_applications")
@@ -78,15 +83,24 @@ const AdminDashboard = () => {
         .order("created_at", { ascending: false })
         .limit(5)
 
+      // Fetch recent blog posts
+      const { data: recentBlogPosts } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(5)
+
       setStats({
         totalApplications: applicationsCount || 0,
         totalBookings: bookingsCount || 0,
         totalOrders: ordersCount || 0,
         totalProducts: productsCount || 0,
         totalTreatments: treatmentsCount || 0,
+        totalBlogPosts: blogPostsCount || 0,
         recentApplications: recentApplications || [],
         recentBookings: recentBookings || [],
         recentOrders: recentOrders || [],
+        recentBlogPosts: recentBlogPosts || [],
       })
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
@@ -121,7 +135,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Job Applications</CardTitle>
@@ -176,16 +190,27 @@ const AdminDashboard = () => {
                 <p className="text-xs text-muted-foreground">Available treatments</p>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+                <PenTool className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalBlogPosts}</div>
+                <p className="text-xs text-muted-foreground">Published blog posts</p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
             <Link href="/admin/applications">
               <Card className="hover:shadow-lg h-full transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Briefcase className="h-6 w-6 text-blue-600" />
+                    <div className="p-2 lg:p-2 xl:p-1 bg-blue-100 rounded-lg">
+                      <Briefcase className="xl:w-5 xl:h-5 h-6 w-6 text-blue-600" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-primary/30">Manage Applications</h3>
@@ -259,10 +284,26 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link href="/admin/blog">
+              <Card className="hover:shadow-lg h-full transition-shadow cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-teal-100 rounded-lg">
+                      <PenTool className="h-6 w-6 text-teal-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-primary/30">Manage Blog</h3>
+                      <p className="text-sm text-gray-600">Create and edit blog posts</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
           {/* Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Recent Applications */}
             <Card>
               <CardHeader>
@@ -330,6 +371,30 @@ const AdminDashboard = () => {
                     ))
                   ) : (
                     <p className="text-gray-500 text-sm">No recent orders</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Blog Posts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg text-primary">Recent Blog Posts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {stats.recentBlogPosts.length > 0 ? (
+                    stats.recentBlogPosts.map((post) => (
+                      <div key={post.id} className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{post.title}</p>
+                          <p className="text-sm text-gray-600">{post.is_published ? "Published" : "Draft"}</p>
+                        </div>
+                        <Badge variant="outline">{new Date(post.created_at).toLocaleDateString()}</Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">No recent blog posts</p>
                   )}
                 </div>
               </CardContent>

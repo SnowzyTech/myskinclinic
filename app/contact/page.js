@@ -286,14 +286,14 @@ Please get back to me. Thank you!`
                   <p className="text-muted-foreground mb-4">
                     Stay connected with us on social media for beauty tips, treatment updates, and special offers.
                   </p>
-                  <div className="flex space-x-4">
-                    <Button variant="outline" size="sm" className="bg-transparent text-primary">
+                  <div className="flex md:space-x-4 space-x-1 md:text-sm text-xs">
+                    <Button variant="outline" size="sm" className="bg-transparent text-primary md:text-sm text-xs">
                       Facebook
                     </Button>
-                    <Button variant="outline" size="sm" className="bg-transparent text-primary">
+                    <Button variant="outline" size="sm" className="bg-transparent text-primary md:text-sm text-xs">
                       Instagram
                     </Button>
-                    <Button variant="outline" size="sm" className="bg-transparent text-primary">
+                    <Button variant="outline" size="sm" className="bg-transparent text-primary md:text-sm text-xs">
                       Twitter
                     </Button>
                   </div>
@@ -344,15 +344,15 @@ Please get back to me. Thank you!`
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-4">
-                    <Mail className="w-6 h-6 text-primary mt-1" />
+                  <div className="flex items-start md:space-x-4 space-x-1">
+                    <Mail className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground">Email</h4>
-                      <p className="text-muted-foreground">Onitsha@beautytherapyinstitute.co.za</p>
+                      <p className="text-muted-foreground text-xs md:text-lg">Onitsha@beautytherapyinstitute.co.za</p>
                     </div>
                   </div>
 
-                   <div className="flex items-start gap-4">
+                   <div className="flex items-start md:gap-4 gap-2">
                       <Globe className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
                       <div>
                         <p className="font-medium text-foreground">Website</p>
@@ -360,7 +360,7 @@ Please get back to me. Thank you!`
                           href="http://www.beautytherapyinstitute.co.za"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary hover:underline"
+                          className="text-primary hover:underline text-sm md:text-lg"
                         >
                           www.beautytherapyinstitute.co.za
                         </a>

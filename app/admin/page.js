@@ -67,7 +67,7 @@ const AdminLoginPage = () => {
       <div className="max-w-md w-full mx-4">
         <Card>
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-background border rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl text-primary">Admin Login</CardTitle>

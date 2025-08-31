@@ -247,7 +247,7 @@ const AdminBlogPage = () => {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Button onClick={resetForm} className="bg-primary border hover:bg-primary/90 text-primary-foreground">
                   <Plus className="w-4 h-4 mr-2" />
                   New Post
                 </Button>
@@ -331,7 +331,7 @@ const AdminBlogPage = () => {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="bg-primary border hover:bg-primary/90 text-primary-foreground"
                     >
                       {loading ? "Saving..." : editingPost ? "Update Post" : "Create Post"}
                     </Button>
