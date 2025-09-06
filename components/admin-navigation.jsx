@@ -4,7 +4,19 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Menu, X, LogOut, Home, Package, Calendar, FileText, Users, Stethoscope, PenTool } from "lucide-react"
+import {
+  Menu,
+  X,
+  LogOut,
+  Home,
+  Package,
+  Calendar,
+  FileText,
+  Users,
+  Stethoscope,
+  PenTool,
+  CreditCard,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
@@ -50,6 +62,7 @@ const AdminNavigation = () => {
     { name: "Applications", href: "/admin/applications", icon: <Users className="w-4 h-4" /> },
     { name: "Treatments", href: "/admin/treatments", icon: <Stethoscope className="w-4 h-4" /> },
     { name: "Orders", href: "/admin/orders", icon: <FileText className="w-4 h-4" /> },
+    { name: "Manual Payments", href: "/admin/manual-payments", icon: <CreditCard className="w-4 h-4" /> },
     { name: "Blog", href: "/admin/blog", icon: <PenTool className="w-4 h-4" /> },
   ]
 
@@ -68,12 +81,12 @@ const AdminNavigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1 lg:space-x-1">
+          <div className="hidden lg:flex items-center space-x-0 lg:space-x-0">
             {adminNavItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center space-x-1 text-[12px] font-medium transition-all duration-200 hover:bg-primary/10 px-3 py-2 rounded-md ${
+                className={`flex items-center space-x-1 text-[10px] font-medium transition-all duration-200 hover:bg-primary/10 px-3 py-2 rounded-md ${
                   pathname === item.href ? "text-primary bg-primary/10" : "text-foreground"
                 }`}
               >

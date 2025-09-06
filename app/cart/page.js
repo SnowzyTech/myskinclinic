@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
+import { Trash2, Plus, Minus, ShoppingBag, CreditCard, Building2 } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { initializePayment } from "@/lib/paystack"
 import { useToast } from "@/hooks/use-toast"
@@ -16,6 +16,7 @@ const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice, getTotalItems } = useCart()
   const [customerEmail, setCustomerEmail] = useState("")
   const [loading, setLoading] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("paystack")
   const { toast } = useToast()
 
   const handleQuantityChange = (productId, newQuantity) => {
@@ -47,6 +48,21 @@ const CartPage = () => {
         description: "Add some products to your cart before checking out.",
         variant: "destructive",
       })
+      return
+    }
+
+    if (paymentMethod === "manual") {
+      localStorage.setItem(
+        "manualCheckoutData",
+        JSON.stringify({
+          items,
+          customerEmail,
+          totalAmount: getTotalPrice(),
+          totalItems: getTotalItems(),
+        }),
+      )
+
+      window.location.href = "/checkout/manual"
       return
     }
 
@@ -219,13 +235,72 @@ const CartPage = () => {
                     />
                   </div>
 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Payment Method *</label>
+                    <div className="space-y-2">
+                      {/* <div
+                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                          paymentMethod === "paystack"
+                            ? "border-primary bg-primary/5"
+                            : "border-gray-300 hover:border-gray-400"
+                        }`}
+                        onClick={() => setPaymentMethod("paystack")}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="paystack"
+                            checked={paymentMethod === "paystack"}
+                            onChange={() => setPaymentMethod("paystack")}
+                            className="text-primary"
+                          />
+                          <CreditCard className="w-5 h-5 text-primary" />
+                          <div>
+                            <p className="font-medium text-primary">Online Payment</p>
+                            <p className="text-sm text-gray-600">Pay with card, bank transfer, or USSD</p>
+                          </div>
+                        </div>
+                      </div> */}
+
+                      <div
+                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                          paymentMethod === "manual"
+                            ? "border-primary bg-primary/5"
+                            : "border-gray-300 hover:border-gray-400"
+                        }`}
+                        onClick={() => setPaymentMethod("manual")}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="manual"
+                            checked={paymentMethod === "manual"}
+                            onChange={() => setPaymentMethod("manual")}
+                            className="text-primary"
+                          />
+                          <Building2 className="w-5 h-5 text-primary" />
+                          <div>
+                            <p className="font-medium text-primary">Bank Transfer</p>
+                            <p className="text-sm text-primary-foreground">Manual bank transfer with confirmation</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <Button
                     size="lg"
                     className="w-full bg-background hover:bg-card border"
                     onClick={handleCheckout}
                     disabled={loading}
                   >
-                    {loading ? "Processing..." : "Proceed to Checkout"}
+                    {loading
+                      ? "Processing..."
+                      : paymentMethod === "manual"
+                        ? "Continue to Bank Transfer"
+                        : "Proceed to Checkout"}
                   </Button>
 
                   <Button

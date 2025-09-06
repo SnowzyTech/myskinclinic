@@ -228,13 +228,13 @@ const AdminBlogPage = () => {
   return (
     <>
       <AdminNavigation />
-      <div className="md:pt-16 pt-16 min-h-screen bg-card overflow-x-hidden">
+      <div className="md:pt-16 pt-16 min-h-screen bg-background overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex-col md:flex items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <div className="flex flex-col gap-4">
               <Link href="/admin/dashboard">
-                <Button variant="outline" size="sm" className="">
+                <Button variant="outline" size="sm" className="bg-card text-primary w-fit">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Button>
@@ -247,7 +247,7 @@ const AdminBlogPage = () => {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm} className="bg-primary border hover:bg-primary/90 text-primary-foreground">
+                <Button onClick={resetForm} className="bg-primary border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" />
                   New Post
                 </Button>

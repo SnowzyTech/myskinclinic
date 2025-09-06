@@ -361,7 +361,7 @@ const AdminTreatmentsPage = () => {
                   <span className="xs:hidden">Add</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-card max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto border-border mx-4">
+              <DialogContent className="bg-card max-w-[550px] md:max-w-4xl max-h-[90vh] overflow-y-auto border-border">
                 <DialogHeader>
                   <DialogTitle className="text-card-foreground text-lg sm:text-xl">
                     {editingTreatment ? "Edit Treatment" : "Add New Treatment"}

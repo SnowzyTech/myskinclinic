@@ -38,6 +38,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
+import AdminNavigation from "@/components/admin-navigation"
 
 const AdminApplicationsPage = () => {
   const [applications, setApplications] = useState([])
@@ -319,16 +320,18 @@ const AdminApplicationsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+    <>
+     <AdminNavigation />
+     <div className="pt-16 min-h-screen bg-background p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <Link href="/admin/dashboard">
-          <Button variant="outline" className="mb-6 flex items-center gap-2 bg-card text-foreground">
+          <Button variant="outline" className="md:mt-[50px] mt-[30px] mb-8 flex items-center gap-2 bg-card text-foreground">
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </Button>
         </Link>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">Job Applications</h1>
-        <p className="text-muted-foreground mb-8">Manage and review job applications</p>
+        <h1 className="text-3xl sm:text-4xl text-center font-bold text-foreground mb-2">Job Applications</h1>
+        <p className="text-muted-foreground text-center mb-8">Manage and review job applications</p>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -785,6 +788,8 @@ const AdminApplicationsPage = () => {
         </div>
       </div>
     </div>
+    </>
+
   )
 }
 

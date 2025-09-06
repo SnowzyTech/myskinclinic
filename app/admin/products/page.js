@@ -235,27 +235,30 @@ const AdminProductsPage = () => {
   return (
     <>
       <AdminNavigation />
-      <div className="pt-12 min-h-screen bg-background ">
+      <div className="pt-12 min-h-screen bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="flex justify-between md:gap-8 gap-1 items-center mb-8">
-            <div className="flex flex-col items-start gap-9">
-              <Link href="/admin/dashboard" className="bg-card text-primary">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <div className="flex flex-col gap-4">
+              <Link href="/admin/dashboard" className="bg-card text-primary w-fit">
                 <Button variant="outline" size="sm" className="bg-card rounded-sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Button>
               </Link>
-              <div className="items-end pt-1">
-                <h1 className="text-3xl font-bold text-primary">Manage Products</h1>
-                <p className="text-gray-600">Add, edit, and manage your product catalog</p>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-primary">Manage Products</h1>
+                <p className="text-gray-600 text-sm sm:text-base">Add, edit, and manage your product catalog</p>
               </div>
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm} className="bg-card border hover:bg-background text-primary">
-                  <Plus className="w-4 h-4 mr-4 md:mr-2" />
+                <Button
+                  onClick={resetForm}
+                  className="bg-card border hover:bg-background text-primary w-full sm:w-auto"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
                   Add Product
                 </Button>
               </DialogTrigger>
@@ -351,7 +354,9 @@ const AdminProductsPage = () => {
                           <SelectValue placeholder="Select brand" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem className="bg-background" value="none">No Brand</SelectItem>
+                          <SelectItem className="bg-background" value="none">
+                            No Brand
+                          </SelectItem>
                           {brands.map((brand) => (
                             <SelectItem className="bg-background" key={brand.id} value={brand.id.toString()}>
                               {brand.name}
@@ -399,10 +404,10 @@ const AdminProductsPage = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden">
-                <div className="relative h-48">
+                <div className="relative h-40 sm:h-48">
                   <Image
                     src={product.image_url || "/placeholder.svg?height=200&width=300&query=skincare product"}
                     alt={product.name}
@@ -410,12 +415,12 @@ const AdminProductsPage = () => {
                     className="object-cover"
                   />
                   <div className="absolute top-2 right-2">
-                    <Badge variant={product.is_active ? "default" : "secondary"}>
+                    <Badge variant={product.is_active ? "default" : "secondary"} className="text-xs">
                       {product.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="mb-2 flex flex-wrap gap-1">
                     <Badge variant="outline" className="text-xs">
                       {product.categories?.name}
@@ -426,24 +431,29 @@ const AdminProductsPage = () => {
                       </Badge>
                     )}
                   </div>
-                  <h3 className="text-lg font-semibold text-primary mb-2 line-clamp-2">{product.name}</h3>
-                  <p className="text-primary/90 text-sm mb-3 line-clamp-2">{product.description}</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-primary mb-2 line-clamp-2">{product.name}</h3>
+                  <p className="text-primary/90 text-xs sm:text-sm mb-3 line-clamp-2">{product.description}</p>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-xl font-bold text-primary">₦{product.price}</span>
-                    <span className="text-sm text-gray-500">Stock: {product.stock_quantity}</span>
+                    <span className="text-lg sm:text-xl font-bold text-primary">₦{product.price}</span>
+                    <span className="text-xs sm:text-sm text-gray-500">Stock: {product.stock_quantity}</span>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(product)} className="flex-1">
-                      <Edit className="w-4 h-4 mr-1" />
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(product)}
+                      className="flex-1 text-xs sm:text-sm"
+                    >
+                      <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Edit
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(product.id)}
-                      className="text-gray-200 hover:text-gray-700"
+                      className="text-gray-200 hover:text-gray-700 px-2 sm:px-3"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                   </div>
                 </CardContent>
