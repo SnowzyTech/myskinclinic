@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope, PenTool } from "lucide-react"
+import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope, PenTool, CreditCard } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import AdminNavigation from "@/components/admin-navigation"
 
@@ -298,6 +298,26 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 </CardContent>
+
+               
+              </Card>
+            </Link>
+
+            <Link href="/admin/manual-payments">
+             <Card className="hover:shadow-lg h-full transition-shadow cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-teal-100 rounded-lg">
+                      <CreditCard className="h-6 w-6 text-teal-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-primary/30">Manage Payments</h3>
+                      <p className="text-sm text-gray-600">View and manage payments</p>
+                    </div>
+                  </div>
+                </CardContent>
+
+        
               </Card>
             </Link>
           </div>
