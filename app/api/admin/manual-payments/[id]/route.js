@@ -1,12 +1,6 @@
-
-
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 import { sendPaymentApprovalEmail, sendPaymentRejectionEmail } from "../../../../../lib/email-notification"
-
-
-
-// import { sendPaymentApprovalEmail, sendPaymentRejectionEmail } from "@/lib/email-notifications"
 
 export async function PATCH(request, { params }) {
   try {
@@ -58,12 +52,6 @@ export async function PATCH(request, { params }) {
       throw fetchError
     }
 
-    console.log("[v0] Payment data retrieved:", {
-      hasOrder: !!paymentData.orders,
-      customerEmail: paymentData.orders?.user_email,
-      customerName: paymentData.orders?.customer_name,
-    })
-
     // If approved, update order status to completed
     if (status === "approved" && paymentData.orders) {
       const { error: orderError } = await supabase
@@ -79,21 +67,32 @@ export async function PATCH(request, { params }) {
 
     // Send email notification
     try {
-      const customerEmail = paymentData.orders?.user_email
+      const customerEmail = paymentData.customer_email || paymentData.orders?.user_email
+      const customerName = paymentData.customer_name || paymentData.orders?.customer_name
+      let orderData = paymentData.orders
 
-      if (!customerEmail || typeof customerEmail !== "string") {
-        console.error("[v0] Invalid email address:", customerEmail)
-        throw new Error("Customer email not found or invalid")
+      if (!orderData && customerEmail) {
+        orderData = {
+          id: paymentData.order_id,
+          user_email: customerEmail,
+          customer_name: customerName,
+          total_amount: paymentData.amount_paid,
+          order_items: [],
+        }
       }
 
-      console.log("[v0] Sending email to:", customerEmail)
+      if (!customerEmail) {
+        console.log("[v0] No customer email found, skipping email notification")
+        return NextResponse.json({
+          success: true,
+          message: `Payment ${status} successfully (email notification skipped - no customer email)`,
+        })
+      }
 
       if (status === "approved") {
-        const result = await sendPaymentApprovalEmail(paymentData.orders, paymentData)
-        console.log("[v0] Approval email result:", result)
+        await sendPaymentApprovalEmail(orderData, paymentData)
       } else if (status === "rejected") {
-        const result = await sendPaymentRejectionEmail(paymentData.orders, paymentData, notes)
-        console.log("[v0] Rejection email result:", result)
+        await sendPaymentRejectionEmail(orderData, paymentData, notes)
       }
     } catch (emailError) {
       console.error("[v0] Email sending failed:", emailError)

@@ -275,8 +275,8 @@ const AboutPage = () => {
               },
               {
                 name: "Maria Rodriguez",
-                role: "Senior Aesthetic Specialist",
-                image: "/images/director.jpg",
+                role: "Administrator",
+                image: "/images/administrator.jpg",
                 bio: "Maria specializes in advanced facial treatments and has helped thousands of clients achieve radiant, healthy skin through personalized care.",
               },
               {

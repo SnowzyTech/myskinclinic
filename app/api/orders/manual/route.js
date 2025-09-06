@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { createServerClient } from "@/lib/supabase"
 
 export async function POST(request) {
   try {
+    const supabase = createServerClient()
+
     const { customerDetails, cartItems, totalAmount, paymentDetails } = await request.json()
 
     console.log("[v0] Payment details received:", paymentDetails)
@@ -55,6 +57,8 @@ export async function POST(request) {
     const manualPaymentData = {
       order_id: newOrder.id,
       sender_name: paymentDetails.senderName,
+      customer_email: customerDetails.email,
+      customer_name: customerDetails.name,
       amount_paid: Number.parseFloat(paymentDetails.amountPaid),
       transfer_reference: paymentDetails.transferReference || null,
       bank_name: paymentDetails.bankName || null,
