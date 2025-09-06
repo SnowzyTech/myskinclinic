@@ -364,13 +364,13 @@ Please confirm my appointment. Thank you!`
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-primary" />
-                    <span className="text-primary/70">info@skinclinic.com</span>
+                    <span className="text-primary/70">myskinaestheticsclinic@gmail.com</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <MessageSquare className="w-5 h-5 text-primary mt-0.5" />
                     <div>
-                      <p className="text-gray-600">WhatsApp: +2348038905589</p>
-                      <p className="text-gray-500 text-sm">Available 9 AM - 6 PM, Mon-Sat</p>
+                      <p className="text-primary-foreground">WhatsApp: +2348038905589</p>
+                      <p className="text-primary text-sm">Available 9 AM - 6 PM, Mon-Sat</p>
                     </div>
                   </div>
                 </CardContent>
