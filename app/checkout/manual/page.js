@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -35,6 +35,7 @@ const ManualCheckoutPage = () => {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const paymentFormRef = useRef(null)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -112,6 +113,15 @@ const ManualCheckoutPage = () => {
     }
 
     setShowPaymentForm(true)
+
+    setTimeout(() => {
+      if (paymentFormRef.current) {
+        paymentFormRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        })
+      }
+    }, 100)
   }
 
   const handleSubmitPayment = async () => {
@@ -340,7 +350,7 @@ const ManualCheckoutPage = () => {
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-800">
                       <strong>Instructions:</strong> Please transfer the exact amount to the account above and click "I
-                      Have Paid" below to confirm your payment.
+                      Have Paid Button" below and fill the Payment Confirmation Details to confirm your payment.
                     </p>
                   </div>
                 </CardContent>
@@ -348,7 +358,7 @@ const ManualCheckoutPage = () => {
             )}
 
             {showPaymentForm && (
-              <Card>
+              <Card ref={paymentFormRef}>
                 <CardHeader>
                   <CardTitle className="text-primary">Payment Confirmation</CardTitle>
                 </CardHeader>

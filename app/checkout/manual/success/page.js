@@ -13,6 +13,10 @@ const ManualPaymentSuccessPage = () => {
   const orderId = searchParams.get("orderId")
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     if (orderId) {
       fetchOrderData(orderId)
     }
@@ -64,7 +68,6 @@ const ManualPaymentSuccessPage = () => {
                 <li>• Our team will verify your bank transfer</li>
                 <li>• You'll receive an email confirmation once approved</li>
                 <li>• Your order will then be processed for delivery</li>
-                
               </ul>
             </div>
 

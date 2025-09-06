@@ -17,6 +17,10 @@ const PaymentCallbackPage = () => {
   const { clearCart } = useCart()
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     const reference = searchParams.get("reference")
     const trxref = searchParams.get("trxref") // Also check for trxref parameter
 
