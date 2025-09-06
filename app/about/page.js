@@ -265,7 +265,7 @@ const AboutPage = () => {
             </div>
           </ScrollAnimation>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {[
               {
                 name: "Mrs Chisom Geraldine",
@@ -274,17 +274,12 @@ const AboutPage = () => {
                 bio: "Geraldine is a Pharmacist with over 9 years of experience and an MSc in Clinical Pharmacy. She is a certified Advanced Aesthetics Specialist and Licensed Medical Aesthetics Practitioner with expertise in facials, body treatments, injectables, and laser therapies. Passionate and detail-oriented, she believes everyone deserves confidence in their own skin.",
               },
               {
-                name: "Maria Rodriguez",
+                name: "Chisom Okoye",
                 role: "Administrator",
                 image: "/images/administrator.jpg",
-                bio: "Maria specializes in advanced facial treatments and has helped thousands of clients achieve radiant, healthy skin through personalized care.",
+                bio: "Okoye specializes in advanced facial treatments and has helped thousands of clients achieve radiant, healthy skin through personalized care.",
               },
-              {
-                name: "Jennifer Chen",
-                role: "Aesthetic Therapist",
-                image: "/images/director.jpg",
-                bio: "Jennifer brings expertise in the latest aesthetic technologies and is passionate about helping clients feel confident in their own skin.",
-              },
+            
             ].map((member, index) => (
               <ScrollAnimation key={index} delay={index * 100}>
                 <Card className="overflow-hidden h-full hover:shadow-lg transition-all duration-300 bg-card border-border">
