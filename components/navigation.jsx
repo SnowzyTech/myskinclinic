@@ -224,16 +224,16 @@ export default function Navigation() {
                 <DropdownMenuTrigger className="text-foreground hover:text-[#c19a88] hover:bg-[#2a2a2a] dark:hover:bg-[#2a2a2a] light:hover:bg-[#e6d7c8] light:hover:text-[#8b4513] p-2 rounded-md transition-all duration-200">
                   <User className="h-5 w-5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 bg-background cursor-pointer">
                   <div className="px-2 py-1.5 text-sm font-medium text-foreground border-b border-border">
                     {user.user_metadata?.full_name || user.email?.split("@")[0] || "User"}
                   </div>
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuItem asChild>
                     <Link href="/profile" className="flex items-center">
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   {user.email === "admin@skinclinic.com" && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin/dashboard" className="flex items-center">

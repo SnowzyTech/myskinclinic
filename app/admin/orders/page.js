@@ -375,6 +375,42 @@ const AdminOrdersPage = () => {
                       )}
                     </div>
 
+                    {/* Customer Details */}
+                    {(order.customer_phone ||
+                      order.customer_address ||
+                      order.customer_city ||
+                      order.customer_state) && (
+                      <div className="mt-4">
+                        <h4 className="font-semibold text-sm sm:text-base text-foreground mb-3">Customer Details</h4>
+                        <div className="space-y-2 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                          {order.customer_phone && (
+                            <div className="flex justify-between items-start gap-2">
+                              <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Phone:</span>
+                              <span className="text-xs sm:text-sm text-foreground text-right">
+                                {order.customer_phone}
+                              </span>
+                            </div>
+                          )}
+                          {order.customer_address && (
+                            <div className="flex justify-between items-start gap-2">
+                              <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Address:</span>
+                              <span className="text-xs sm:text-sm text-foreground text-right break-words">
+                                {order.customer_address}
+                              </span>
+                            </div>
+                          )}
+                          {(order.customer_city || order.customer_state) && (
+                            <div className="flex justify-between items-start gap-2">
+                              <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Location:</span>
+                              <span className="text-xs sm:text-sm text-foreground text-right">
+                                {[order.customer_city, order.customer_state].filter(Boolean).join(", ")}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Order Summary */}
                     <div>
                       <h4 className="font-semibold text-sm sm:text-base text-foreground mb-3">Order Summary</h4>
