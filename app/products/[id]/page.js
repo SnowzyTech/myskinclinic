@@ -109,7 +109,7 @@ const ProductDetailPage = () => {
               </Badge>
               <h1 className="text-3xl lg:text-4xl font-bold text-primary mb-4">{product.name}</h1>
               <p className="text-3xl font-bold text-primary/90 mb-4">₦{product.price}</p>
-              <p className="text-gray-600 leading-relaxed">{product.description}</p>
+              <p className="text-card-foreground leading-relaxed">{product.description}</p>
             </div>
 
             <Separator />
@@ -118,7 +118,7 @@ const ProductDetailPage = () => {
             {product.ingredients && (
               <div>
                 <h3 className="text-lg font-semibold text-primary mb-2">Key Ingredients</h3>
-                <p className="text-gray-600">{product.ingredients}</p>
+                <p className="text-foreground-primary">{product.ingredients}</p>
               </div>
             )}
 
@@ -154,7 +154,7 @@ const ProductDetailPage = () => {
                 <Button
                   size="lg"
                   onClick={handleAddToCart}
-                  className="flex-1 bg-card text-primary hover:bg-light-700 md:p-0 p-3 shadow-lg"
+                  className="flex-1 bg-card border text-primary hover:bg-light-700 md:p-0 p-3 shadow-lg"
                   disabled={product.stock_quantity === 0}
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
