@@ -439,7 +439,7 @@ const TreatmentsPage = () => {
                 services.
               </p>
               <a
-                href="/documents/myskin-price-list.pdf"
+                href="/documents/myskinaesthetics.pdf"
                 download="MySkin-Price-List.pdf"
                 className="inline-flex items-center px-8 py-4 bg-background border hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
               >

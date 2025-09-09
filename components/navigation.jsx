@@ -142,7 +142,7 @@ export default function Navigation() {
             </div>
             <div className="flex flex-col pt-2">
               <span className="text-xs text-muted-foreground">AESTHETIC CLINICS</span>
-              <span className="text-[7px] text-gray-400">Healthy skin more confident you are</span>
+              <span className="text-[9px] text-gray-400">Restoring Confidence</span>
             </div>
           </Link>
 

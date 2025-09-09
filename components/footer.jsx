@@ -39,7 +39,7 @@ const Footer = () => (
               </div>
               <div className="flex flex-col pt-2">
                 <span className="text-xs text-muted-foreground">AESTHETIC CLINICS</span>
-                <span className="text-[7px] text-gray-400">Healthy skin more confident you are</span>
+                <span className="text-[9px] text-gray-400">Restoring Confidence</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-sm">
@@ -137,7 +137,7 @@ const Footer = () => (
       <ScrollAnimation delay={400}>
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground text-sm">
-            © 2025 MySkin Aesthetic Clinics. All rights reserved. | Privacy Policy | Terms of Service
+            © 2025 MySkinAesthetic Clinics. All rights reserved. | Privacy Policy | Terms of Service
           </p>
         </div>
       </ScrollAnimation>
