@@ -93,7 +93,7 @@ const SignUpPage = () => {
               <User className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl text-primary">Create Account</CardTitle>
-            <p className="text-gray-600">Join SkinClinic for exclusive offers and updates</p>
+            <p className="text-gray-400">Join SkinClinic for exclusive offers and updates</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignUp} className="space-y-4">
@@ -168,7 +168,7 @@ const SignUpPage = () => {
             <div className="text-center">
               <p className="text-primary">
                 Already have an account?{" "}
-                <Link href="/auth/signin" className="text-primary/100 rounded-sm border p-3 bg-background hover:text-primary/100 font-medium">
+                <Link href="/auth/signin" className="text-primary/100 rounded-sm p-3 bg-background hover:text-primary/100 font-medium">
                   Sign in here
                 </Link>
               </p>

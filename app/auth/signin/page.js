@@ -63,7 +63,7 @@ const SignInPage = () => {
               <Lock className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl text-primary">Welcome Back</CardTitle>
-            <p className="text-gray-600">Sign in to your SkinClinic account</p>
+            <p className="text-gray-400">Sign in to your SkinClinic account</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignIn} className="space-y-4">
