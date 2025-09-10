@@ -277,7 +277,13 @@ const AboutPage = () => {
                 name: "Chisom Okoye",
                 role: "Administrator",
                 image: "/images/administrator.jpg",
-                bio: "Okoye specializes in advanced facial treatments and has helped thousands of clients achieve radiant, healthy skin through personalized care.",
+                bio: "Chisom Okoye serves as an Administrator at Myskin Aesthetic Clinic and Support staff at Beauty Therapy Institute, Onitsha. She holds a degree in Health Education and is certified by MYCNA for the successful completion of the National Caregiver Certification Program. In addition, she is trained in Health, Safety and Environment (HSE) as well as Customer Service, equipping her with strong skills in wellness, safety, and client relations. With a strong passion for the beauty industry, Chisom is dedicated to supporting BTI’s mission of empowering individuals through professional training, while ensuring an efficient and welcoming learning environment",
+              },
+              {
+                name: "Mary Ogochukwu Ugbaja",
+                role: "Aesthetician",
+                image: "/images/aesthetican.jpg",
+                bio: "Mary is a passionate educator with a B.Sc (Ed) in Biology Education from the University of Nigeria, Nsukka. She completed her National Youth Service Corps (NYSC) in 2023 and has been teaching Biology for over four years in renowned schools across Anambra and Enugu States. With a strong commitment to inspiring and shaping young minds, Mary brings both expertise and enthusiasm to every learning environment she joins. She believes in making a lasting impact wherever she finds herself, whether in the classroom or beyond. Outside of teaching, Mary is deeply driven by her love for continuous growth and service, always seeking opportunities to contribute meaningfully to others.",
               },
             
             ].map((member, index) => (
