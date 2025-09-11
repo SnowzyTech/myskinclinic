@@ -73,7 +73,7 @@ const SignInPage = () => {
                   Email Address
                 </Label>
                 <Input
-                 className="bg-card"
+                  className="bg-card"
                   id="email"
                   type="email"
                   value={email}
@@ -89,7 +89,7 @@ const SignInPage = () => {
                   Password
                 </Label>
                 <Input
-                 className="bg-card"
+                  className="bg-card"
                   id="password"
                   type="password"
                   value={password}
@@ -99,24 +99,36 @@ const SignInPage = () => {
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full border bg-background hover:bg-background/100" disabled={loading}>
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full border bg-background hover:bg-background/100"
+                disabled={loading}
+              >
                 {loading ? "Signing In..." : "Sign In"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
+
+            <div className="text-center mt-4">
+              <Link href="/auth/forgot-password" className="text-sm text-primary hover:text-gray-600">
+                Forgot your password?
+              </Link>
+            </div>
 
             <Separator className="my-6" />
 
             <div className="text-center">
               <p className="text-primary">
                 Don't have an account?{" "}
-                <Link href="/auth/signup" className="text-primary md:text-lg text-[14px] rounded-sm hover:text-gray-600 font-medium">
+                <Link
+                  href="/auth/signup"
+                  className="text-primary md:text-lg text-[14px] rounded-sm hover:text-gray-600 font-medium"
+                >
                   Sign up here
                 </Link>
               </p>
             </div>
-
-          
           </CardContent>
         </Card>
       </div>
