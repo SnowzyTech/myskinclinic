@@ -364,7 +364,7 @@ Please confirm my appointment. Thank you!`
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-primary" />
-                    <span className="text-primary/70">myskinaestheticsclinic@gmail.com</span>
+                    <span className="text-primary/70">info@myskinaestheticsclinic.com</span>
                   </div>
                   <div className="flex items-start space-x-3">
                     <MessageSquare className="w-5 h-5 text-primary mt-0.5" />
