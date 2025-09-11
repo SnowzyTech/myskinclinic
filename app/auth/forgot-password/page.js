@@ -21,8 +21,12 @@ const ForgotPasswordPage = () => {
     setLoading(true)
 
     try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : window.location.origin)
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+        redirectTo: `${baseUrl}/auth/reset-password`,
       })
 
       if (error) throw error
