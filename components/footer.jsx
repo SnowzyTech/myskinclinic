@@ -39,7 +39,7 @@ const Footer = () => (
               </div>
               <div className="flex flex-col pt-2">
                 <span className="text-xs text-muted-foreground">AESTHETIC CLINICS</span>
-                <span className="text-[9px] text-gray-400">Restoring Confidence</span>
+                <span className="text-[9px] text-gray-600">Restoring Confidence</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-sm">
@@ -123,7 +123,7 @@ const Footer = () => (
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary" />
-                <span className="text-muted-foreground">info@myskinaesthetics.com</span>
+                <span className="text-muted-foreground">info@myskinaestheticsclinic.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-primary" />

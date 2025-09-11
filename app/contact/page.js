@@ -43,21 +43,19 @@ const ContactPage = () => {
     setLoading(true)
 
     try {
-      const whatsappMessage = `Hello! I have a message from your website:
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-*Name:* ${formData.name}
-*Email:* ${formData.email}
-*Phone:* ${formData.phone || "Not provided"}
-*Subject:* ${formData.subject || "General Inquiry"}
+      const result = await response.json()
 
-*Message:*
-${formData.message}
-
-Please get back to me. Thank you!`
-
-      const encodedMessage = encodeURIComponent(whatsappMessage)
-      const whatsappNumber = "+2348038905589"
-      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message")
+      }
 
       setFormData({
         name: "",
@@ -68,18 +66,14 @@ Please get back to me. Thank you!`
       })
 
       toast({
-        title: "Message Sent",
-        description: "Redirecting you to WhatsApp to send your message.",
+        title: "Message Sent Successfully!",
+        description: "We've received your message and will get back to you soon.",
       })
-
-      setTimeout(() => {
-        window.open(whatsappUrl, "_blank")
-      }, 1500)
     } catch (error) {
       console.error("Contact form error:", error)
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: error.message || "Failed to send message. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -235,9 +229,9 @@ Please get back to me. Thank you!`
                     <div>
                       <h4 className="font-semibold text-foreground">Address</h4>
                       <p className="text-muted-foreground">
-                        132 Ogbatuluenyi 
+                        132 Ogbatuluenyi
                         <br />
-                        drive federal housing 
+                        drive federal housing
                         <br />
                         estate 33 Onitsha, Anambra
                       </p>
@@ -257,8 +251,8 @@ Please get back to me. Thank you!`
                     <Mail className="w-6 h-6 text-primary mt-1" />
                     <div>
                       <h4 className="font-semibold text-foreground">Email</h4>
-                      <p className="text-muted-foreground">info@myskinaesthetics.com</p>
-                      <p className="text-muted-foreground">support@myskinaesthetics.com</p>
+                      <p className="text-muted-foreground">info@myskinaestheticsclinic.com</p>
+                      {/* <p className="text-muted-foreground">support@myskinaesthetics.com</p> */}
                     </div>
                   </div>
 
@@ -352,20 +346,20 @@ Please get back to me. Thank you!`
                     </div>
                   </div>
 
-                   <div className="flex items-start md:gap-4 gap-2">
-                      <Globe className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground">Website</p>
-                        <a
-                          href="http://www.beautytherapyinstitute.co.za"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline text-sm md:text-lg"
-                        >
-                          www.beautytherapyinstitute.co.za
-                        </a>
-                      </div>
+                  <div className="flex items-start md:gap-4 gap-2">
+                    <Globe className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-foreground">Website</p>
+                      <a
+                        href="http://www.beautytherapyinstitute.co.za"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline text-sm md:text-lg"
+                      >
+                        www.beautytherapyinstitute.co.za
+                      </a>
                     </div>
+                  </div>
 
                   <div>
                     <h4 className="font-semibold text-foreground mb-3">Follow BTI</h4>
@@ -374,7 +368,9 @@ Please get back to me. Thank you!`
                         variant="outline"
                         size="sm"
                         className="bg-card text-primary"
-                        onClick={() => window.open("https://www.instagram.com/btionitsha?igsh=MTJvdDN3ZnR0Yjh2YQ==", "_blank")}
+                        onClick={() =>
+                          window.open("https://www.instagram.com/btionitsha?igsh=MTJvdDN3ZnR0Yjh2YQ==", "_blank")
+                        }
                       >
                         Instagram
                       </Button>
@@ -390,7 +386,9 @@ Please get back to me. Thank you!`
                         variant="outline"
                         size="sm"
                         className="bg-transparent text-primary"
-                        onClick={() => window.open("https://www.tiktok.com/@bti_onitsha?_t=ZS-8yRAKsDrdnb&_r=1", "_blank")}
+                        onClick={() =>
+                          window.open("https://www.tiktok.com/@bti_onitsha?_t=ZS-8yRAKsDrdnb&_r=1", "_blank")
+                        }
                       >
                         TikTok
                       </Button>
@@ -425,20 +423,20 @@ Please get back to me. Thank you!`
                     </div>
                   </div>
 
-                   <div className="flex items-start gap-4">
-                      <Globe className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground">Website</p>
-                        <a
-                          href="https://aestheticspharmacy.ng/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline"
-                        >
-                          aestheticspharmacy.ng
-                        </a>
-                      </div>
+                  <div className="flex items-start gap-4">
+                    <Globe className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-foreground">Website</p>
+                      <a
+                        href="https://aestheticspharmacy.ng/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        aestheticspharmacy.ng
+                      </a>
                     </div>
+                  </div>
 
                   <div>
                     <h4 className="font-semibold text-foreground mb-3">Follow Aesthetics Pharmacy</h4>
@@ -447,7 +445,9 @@ Please get back to me. Thank you!`
                         variant="outline"
                         size="sm"
                         className="bg-transparent text-primary"
-                        onClick={() => window.open("https://www.instagram.com/aesthetics.pharmacy?igsh=dzR0N2FuZGI3azly", "_blank")}
+                        onClick={() =>
+                          window.open("https://www.instagram.com/aesthetics.pharmacy?igsh=dzR0N2FuZGI3azly", "_blank")
+                        }
                       >
                         Instagram
                       </Button>
@@ -455,7 +455,9 @@ Please get back to me. Thank you!`
                         variant="outline"
                         size="sm"
                         className="bg-transparent text-primary"
-                        onClick={() => window.open("https://www.facebook.com/share/1G4mKECnfX/?mibextid=wwXIfr", "_blank")}
+                        onClick={() =>
+                          window.open("https://www.facebook.com/share/1G4mKECnfX/?mibextid=wwXIfr", "_blank")
+                        }
                       >
                         Facebook
                       </Button>
@@ -463,7 +465,9 @@ Please get back to me. Thank you!`
                         variant="outline"
                         size="sm"
                         className="bg-transparent text-primary"
-                        onClick={() => window.open("https://www.tiktok.com/@aesthetics.pharmacy?_t=ZS-8yRA8BhuKXg&_r=1", "_blank")}
+                        onClick={() =>
+                          window.open("https://www.tiktok.com/@aesthetics.pharmacy?_t=ZS-8yRA8BhuKXg&_r=1", "_blank")
+                        }
                       >
                         TikTok
                       </Button>
