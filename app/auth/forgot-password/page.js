@@ -21,9 +21,19 @@ const ForgotPasswordPage = () => {
     setLoading(true)
 
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : window.location.origin)
+      let baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
+      if (!baseUrl) {
+        if (typeof window !== "undefined") {
+          // In browser, use window.location.origin but replace localhost with production URL
+          baseUrl = window.location.origin.includes("localhost")
+            ? "https://myskinaestheticsclinic.com" // Replace with your actual domain
+            : window.location.origin
+        } else {
+          // On server, use Vercel URL or fallback
+          baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://myskinaestheticsclinic.com"
+        }
+      }
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${baseUrl}/auth/reset-password`,
