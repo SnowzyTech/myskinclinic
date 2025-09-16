@@ -12,6 +12,7 @@ import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 import ScrollAnimation from "@/components/scroll-animation"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { useSearchParams } from "next/navigation"
 
 const TreatmentsPage = () => {
   const [treatments, setTreatments] = useState([])
@@ -23,6 +24,7 @@ const TreatmentsPage = () => {
   const { addItem } = useCart()
   const { toast } = useToast()
   const treatmentsGridRef = useRef(null)
+  const searchParams = useSearchParams()
 
   const treatmentCategories = [
     {
@@ -83,8 +85,10 @@ const TreatmentsPage = () => {
 
   useEffect(() => {
     fetchTreatments()
-    const urlParams = new URLSearchParams(window.location.search)
-    const categoryParam = urlParams.get("category")
+  }, [])
+
+  useEffect(() => {
+    const categoryParam = searchParams.get("category")
     if (categoryParam && categoryParam !== "all") {
       setSelectedCategory(categoryParam)
       setTimeout(() => {
@@ -92,9 +96,11 @@ const TreatmentsPage = () => {
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" })
         }
-      }, 500)
+      }, 1000)
+    } else if (!categoryParam) {
+      setSelectedCategory("all")
     }
-  }, [])
+  }, [searchParams])
 
   const fetchTreatments = async () => {
     try {

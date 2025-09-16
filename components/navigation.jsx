@@ -63,11 +63,11 @@ export default function Navigation() {
       name: "Specialized Procedures",
       icon: "🎯",
     },
-    {
-      id: "spa-services",
-      name: "Spa Services",
-      icon: "🧘",
-    },
+    // {
+    //   id: "spa-services",
+    //   name: "Spa Services",
+    //   icon: "🧘",
+    // },
     {
       id: "teeth-whitening",
       name: "Teeth Whitening",
