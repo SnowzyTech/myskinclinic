@@ -28,8 +28,7 @@ export async function PATCH(request, { params }) {
     // Get payment details with order information for email
     const { data: paymentData, error: fetchError } = await supabase
       .from("manual_payments")
-      .select(`
-        *,
+      .select(`*
         orders (
           id,
           user_email,
@@ -56,13 +55,18 @@ export async function PATCH(request, { params }) {
     if (status === "approved" && paymentData.orders) {
       const { error: orderError } = await supabase
         .from("orders")
-        .update({ status: "completed" })
+        .update({
+          status: "completed",
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", paymentData.orders.id)
 
       if (orderError) {
         console.error("[v0] Order update error:", orderError)
         throw orderError
       }
+
+      console.log("[v0] Order status updated to completed for order:", paymentData.orders.id)
     }
 
     // Send email notification

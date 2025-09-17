@@ -37,7 +37,7 @@ const SignInPage = () => {
       })
 
       // Check if user is admin and redirect accordingly
-      if (data.user && data.user.email === "admin@skinclinic.com") {
+      if (data.user && data.user.email === "info@myskinaestheticsclinic.com") {
         router.push("/admin/dashboard")
       } else {
         router.push("/")

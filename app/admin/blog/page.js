@@ -11,11 +11,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, ArrowLeft, Eye, EyeOff } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import ImageUpload from "@/components/image-upload"
 import AdminNavigation from "@/components/admin-navigation"
 import Link from "next/link"
+import { createClient } from "@supabase/supabase-js"
 
 const AdminBlogPage = () => {
   const [posts, setPosts] = useState([])
@@ -33,6 +33,7 @@ const AdminBlogPage = () => {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
   useEffect(() => {
     checkAuth()
@@ -40,20 +41,45 @@ const AdminBlogPage = () => {
   }, [])
 
   const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    try {
+      console.log("[v0] Blog: Checking JWT authentication...")
+      const response = await fetch("/api/verify-admin")
+
+      if (!response.ok) {
+        console.log("[v0] Blog: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      const { authenticated } = await response.json()
+      if (!authenticated) {
+        console.log("[v0] Blog: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      console.log("[v0] Blog: Authenticated successfully")
+    } catch (error) {
+      console.error("[v0] Blog: Auth check failed:", error)
       router.push("/admin")
-      return
     }
   }
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false })
+    try {
+      console.log("[v0] Blog: Fetching posts...")
+      const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false })
 
-    if (!error && data) {
-      setPosts(data)
+      if (error) {
+        console.error("[v0] Blog: Error fetching posts:", error)
+        return
+      }
+
+      console.log("[v0] Blog: Fetched", data?.length || 0, "posts")
+      setPosts(data || [])
+    } catch (error) {
+      console.error("[v0] Blog: Fetch error:", error)
+      setPosts([])
     }
   }
 
@@ -122,29 +148,23 @@ const AdminBlogPage = () => {
         is_published: formData.is_published,
       }
 
+      let result
       if (editingPost) {
-        const { error } = await supabase.from("blog_posts").update(postData).eq("id", editingPost.id)
-
-        if (error) throw error
-
-        toast({
-          title: "Post Updated",
-          description: "Blog post has been successfully updated.",
-        })
+        result = await supabase.from("blog_posts").update(postData).eq("id", editingPost.id)
       } else {
-        const { error } = await supabase.from("blog_posts").insert([postData])
-
-        if (error) throw error
-
-        toast({
-          title: "Post Created",
-          description: "New blog post has been successfully created.",
-        })
+        result = await supabase.from("blog_posts").insert([postData])
       }
 
-      setIsDialogOpen(false)
-      resetForm()
-      fetchPosts()
+      if (result.error) {
+        throw new Error(result.error.message)
+      }
+
+      toast({
+        title: editingPost ? "Post Updated" : "Post Created",
+        description: editingPost
+          ? "Blog post has been successfully updated."
+          : "New blog post has been successfully created.",
+      })
     } catch (error) {
       console.error("Post save error:", error)
       toast({
@@ -154,6 +174,9 @@ const AdminBlogPage = () => {
       })
     } finally {
       setLoading(false)
+      setIsDialogOpen(false)
+      resetForm()
+      fetchPosts()
     }
   }
 
@@ -177,14 +200,14 @@ const AdminBlogPage = () => {
     try {
       const { error } = await supabase.from("blog_posts").delete().eq("id", postId)
 
-      if (error) throw error
+      if (error) {
+        throw new Error(error.message)
+      }
 
       toast({
         title: "Post Deleted",
         description: "Blog post has been successfully deleted.",
       })
-
-      fetchPosts()
     } catch (error) {
       console.error("Delete error:", error)
       toast({
@@ -192,6 +215,8 @@ const AdminBlogPage = () => {
         description: "Failed to delete post. Please try again.",
         variant: "destructive",
       })
+    } finally {
+      fetchPosts()
     }
   }
 
@@ -199,14 +224,14 @@ const AdminBlogPage = () => {
     try {
       const { error } = await supabase.from("blog_posts").update({ is_published: !post.is_published }).eq("id", post.id)
 
-      if (error) throw error
+      if (error) {
+        throw new Error(error.message)
+      }
 
       toast({
         title: post.is_published ? "Post Unpublished" : "Post Published",
         description: `Blog post has been ${post.is_published ? "unpublished" : "published"}.`,
       })
-
-      fetchPosts()
     } catch (error) {
       console.error("Toggle publish error:", error)
       toast({
@@ -214,6 +239,8 @@ const AdminBlogPage = () => {
         description: "Failed to update post status. Please try again.",
         variant: "destructive",
       })
+    } finally {
+      fetchPosts()
     }
   }
 
@@ -247,7 +274,10 @@ const AdminBlogPage = () => {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={resetForm} className="bg-primary border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+                <Button
+                  onClick={resetForm}
+                  className="bg-primary border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   New Post
                 </Button>
@@ -383,12 +413,7 @@ const AdminBlogPage = () => {
                         </>
                       )}
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(post.id)}
-                      className=""
-                    >
+                    <Button variant="outline" size="sm" onClick={() => handleDelete(post.id)} className="">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>

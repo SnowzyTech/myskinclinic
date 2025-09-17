@@ -11,9 +11,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ArrowLeft, Search, CreditCard, CheckCircle, XCircle, Clock, Eye } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import AdminNavigation from "@/components/admin-navigation"
+import { createClient } from "@supabase/supabase-js"
 
 const AdminManualPaymentsPage = () => {
   const [payments, setPayments] = useState([])
@@ -26,6 +26,7 @@ const AdminManualPaymentsPage = () => {
   const [adminNotes, setAdminNotes] = useState("")
   const router = useRouter()
   const { toast } = useToast()
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
   useEffect(() => {
     checkAuth()
@@ -37,44 +38,61 @@ const AdminManualPaymentsPage = () => {
   }, [payments, searchTerm, statusFilter])
 
   const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    try {
+      console.log("[v0] Manual Payments: Checking JWT authentication...")
+      const response = await fetch("/api/verify-admin")
+
+      if (!response.ok) {
+        console.log("[v0] Manual Payments: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      const { authenticated } = await response.json()
+      if (!authenticated) {
+        console.log("[v0] Manual Payments: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      console.log("[v0] Manual Payments: Authenticated successfully")
+    } catch (error) {
+      console.error("[v0] Manual Payments: Auth check failed:", error)
       router.push("/admin")
-      return
     }
   }
 
   const fetchPayments = async () => {
-    const { data, error } = await supabase
-      .from("manual_payments")
-      .select(`
-        *,
-        orders (
-          id,
-          user_email,
-          customer_name,
-          customer_phone,
-          customer_address,
-          customer_city,
-          customer_state,
-          total_amount,
-          status,
-          created_at,
-          order_items (
-            *,
-            products (
-              name,
-              image_url
-            )
+    try {
+      console.log("[v0] Manual Payments: Fetching payments...")
+      const { data, error } = await supabase
+        .from("manual_payments")
+        .select(`
+          *,
+          orders (
+            id,
+            user_email,
+            customer_name,
+            customer_phone,
+            customer_address,
+            customer_city,
+            customer_state,
+            total_amount
           )
-        )
-      `)
-      .order("submitted_at", { ascending: false })
+        `)
+        .order("submitted_at", { ascending: false })
 
-    if (!error && data) {
-      setPayments(data)
+      if (error) {
+        console.error("[v0] Manual Payments: Error fetching payments:", error)
+        setLoading(false)
+        return
+      }
+
+      console.log("[v0] Manual Payments: Fetched", data?.length || 0, "payments")
+      setPayments(data || [])
+    } catch (error) {
+      console.error("[v0] Manual Payments: Fetch error:", error)
+      setPayments([])
     }
     setLoading(false)
   }
@@ -111,21 +129,24 @@ const AdminManualPaymentsPage = () => {
         body: JSON.stringify({
           status: newStatus,
           notes: notes,
-          reviewedBy: "admin", // You could get actual admin email here
+          reviewedBy: "admin",
         }),
       })
 
-      const result = await response.json()
-
       if (!response.ok) {
-        throw new Error(result.error || "Failed to update payment")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to update payment status")
       }
+
+      const result = await response.json()
+      console.log("[v0] Payment update result:", result)
 
       toast({
         title: "Payment Updated",
-        description: `Payment has been ${newStatus} and customer notified via email.`,
+        description: result.message || `Payment has been ${newStatus}.`,
       })
 
+      // Refresh the payments list
       fetchPayments()
       setSelectedPayment(null)
       setAdminNotes("")
@@ -133,7 +154,7 @@ const AdminManualPaymentsPage = () => {
       console.error("Update payment error:", error)
       toast({
         title: "Error",
-        description: "Failed to update payment status. Please try again.",
+        description: error.message || "Failed to update payment status. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -358,27 +379,27 @@ const AdminManualPaymentsPage = () => {
                       {payment.orders && (
                         <div className="space-y-2 text-sm">
                           <div>
-                            <p className="text-muted-foreground">Order ID:</p>
+                            <p className="text-sm text-muted-foreground">Order ID:</p>
                             <p className="font-medium">#{payment.orders.id.slice(-8)}</p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">Customer:</p>
+                            <p className="text-sm text-muted-foreground">Customer:</p>
                             <p className="font-medium">{payment.orders.customer_name || "N/A"}</p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">Email:</p>
+                            <p className="text-sm text-muted-foreground">Email:</p>
                             <p className="font-medium text-xs">{payment.orders.user_email}</p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">Phone:</p>
+                            <p className="text-sm text-muted-foreground">Phone:</p>
                             <p className="font-medium">{payment.orders.customer_phone || "N/A"}</p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">Address:</p>
+                            <p className="text-sm text-muted-foreground">Address:</p>
                             <p className="font-medium">{payment.orders.customer_address || "N/A"}</p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">City, State:</p>
+                            <p className="text-sm text-muted-foreground">City, State:</p>
                             <p className="font-medium">
                               {payment.orders.customer_city && payment.orders.customer_state
                                 ? `${payment.orders.customer_city}, ${payment.orders.customer_state}`
@@ -386,7 +407,7 @@ const AdminManualPaymentsPage = () => {
                             </p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground">Order Total:</p>
+                            <p className="text-sm text-muted-foreground">Order Total:</p>
                             <p className="font-medium">₦{payment.orders.total_amount}</p>
                           </div>
                         </div>

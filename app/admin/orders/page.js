@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Search, Package, Trash2, CreditCard, Building2, AlertCircle } from "lucide-react"
-import { supabase } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import AdminNavigation from "@/components/admin-navigation"
 
@@ -34,39 +33,96 @@ const AdminOrdersPage = () => {
   }, [orders, searchTerm, statusFilter, paymentMethodFilter])
 
   const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    try {
+      console.log("[v0] Orders: Checking JWT authentication...")
+      const response = await fetch("/api/verify-admin")
+
+      if (!response.ok) {
+        console.log("[v0] Orders: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      const { authenticated } = await response.json()
+      if (!authenticated) {
+        console.log("[v0] Orders: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      console.log("[v0] Orders: Authenticated successfully")
+    } catch (error) {
+      console.error("[v0] Orders: Auth check failed:", error)
       router.push("/admin")
-      return
     }
   }
 
   const fetchOrders = async () => {
-    const { data, error } = await supabase
-      .from("orders")
-      .select(`*,
-        order_items (
-          *,
-          products (
-            name,
-            image_url
-          )
-        ),
-        manual_payments (
-          id,
-          payment_status,
-          sender_name,
-          amount_paid,
-          transfer_reference,
-          submitted_at
-        )
-      `)
-      .order("created_at", { ascending: false })
+    try {
+      console.log("[v0] Orders: Fetching orders...")
+      console.log("[v0] Orders: Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log("[v0] Orders: Supabase Key exists:", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
-    if (!error && data) {
-      setOrders(data)
+      const { createClient } = await import("@supabase/supabase-js")
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+
+      console.log("[v0] Orders: Testing database connection...")
+      const { count, error: countError } = await supabase.from("orders").select("*", { count: "exact", head: true })
+
+      if (countError) {
+        console.error("[v0] Orders: Count query error:", countError)
+      } else {
+        console.log("[v0] Orders: Total orders in database:", count)
+      }
+
+      const timestamp = new Date().getTime()
+      console.log("[v0] Orders: Fetching with timestamp:", timestamp)
+
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          *,
+          order_items (
+            *,
+            products (name, image_url)
+          ),
+          manual_payments (*)
+        `)
+        .order("created_at", { ascending: false })
+
+      if (error) {
+        console.error("[v0] Orders: Error fetching orders:", error)
+        console.error("[v0] Orders: Error details:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        })
+        setLoading(false)
+        return
+      }
+
+      console.log("[v0] Orders: Fetched", data?.length || 0, "orders")
+      console.log("[v0] Orders: Raw data:", data)
+
+      data?.forEach((order, index) => {
+        console.log(`[v0] Order ${index + 1}:`, {
+          id: order.id,
+          status: order.status,
+          payment_method: order.payment_method,
+          user_email: order.user_email,
+          total_amount: order.total_amount,
+          created_at: order.created_at,
+          manual_payments: order.manual_payments,
+          order_items: order.order_items,
+        })
+      })
+
+      setOrders(data || [])
+    } catch (error) {
+      console.error("[v0] Orders: Fetch error:", error)
+      console.error("[v0] Orders: Error stack:", error.stack)
+      setOrders([])
     }
     setLoading(false)
   }
@@ -96,16 +152,27 @@ const AdminOrdersPage = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", orderId)
+      const { createClient } = await import("@supabase/supabase-js")
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
-      if (error) throw error
+      const { error } = await supabase
+        .from("orders")
+        .update({
+          status: newStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", orderId)
+
+      if (error) {
+        throw new Error(error.message)
+      }
 
       toast({
         title: "Status Updated",
         description: `Order status has been updated to ${newStatus}.`,
       })
 
-      fetchOrders()
+      await fetchOrders()
     } catch (error) {
       console.error("Update status error:", error)
       toast({
@@ -124,12 +191,13 @@ const AdminOrdersPage = () => {
     setDeletingOrderId(orderId)
 
     try {
-      const response = await fetch(`/api/orders/${orderId}`, {
-        method: "DELETE",
-      })
+      const { createClient } = await import("@supabase/supabase-js")
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
-      if (!response.ok) {
-        throw new Error("Failed to delete order")
+      const { error } = await supabase.from("orders").delete().eq("id", orderId)
+
+      if (error) {
+        throw new Error(error.message)
       }
 
       toast({
@@ -137,7 +205,6 @@ const AdminOrdersPage = () => {
         description: "The order has been successfully deleted.",
       })
 
-      // Remove the deleted order from the state
       setOrders(orders.filter((order) => order.id !== orderId))
     } catch (error) {
       console.error("Delete order error:", error)
@@ -194,13 +261,24 @@ const AdminOrdersPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-6 sm:mb-8">
-            <div className="mb-4">
+            <div className="mb-4 flex justify-between items-center">
               <Link href="/admin/dashboard">
                 <Button variant="outline" size="sm">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Button>
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setLoading(true)
+                  fetchOrders()
+                }}
+                disabled={loading}
+              >
+                {loading ? "Refreshing..." : "Refresh Orders"}
+              </Button>
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Manage Orders</h1>
@@ -446,7 +524,6 @@ const AdminOrdersPage = () => {
 
                       {/* Status Update Buttons */}
                       <div className="mt-4 space-y-2">
-                        {/* Only allow status changes for completed payments or non-manual orders */}
                         {((order.payment_method === "manual" &&
                           order.manual_payments?.[0]?.payment_status === "approved") ||
                           order.payment_method === "paystack") && (
@@ -482,7 +559,6 @@ const AdminOrdersPage = () => {
                           </>
                         )}
 
-                        {/* Show payment verification needed message for manual orders */}
                         {order.payment_method === "manual" &&
                           order.manual_payments?.[0]?.payment_status === "pending" && (
                             <div className="p-2 sm:p-3 bg-yellow-50 border border-yellow-200 rounded-lg">

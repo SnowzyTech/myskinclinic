@@ -117,11 +117,11 @@ const AdminTreatmentsPage = () => {
   }, [treatments, searchTerm])
 
   useEffect(() => {
-    checkAuth()
     fetchTreatments()
     fetchProducts()
   }, [])
 
+  /*
   const checkAuth = async () => {
     const {
       data: { user },
@@ -131,6 +131,7 @@ const AdminTreatmentsPage = () => {
       return
     }
   }
+  */
 
   const fetchTreatments = async () => {
     const { data, error } = await supabase.from("treatments").select("*").order("created_at", { ascending: false })

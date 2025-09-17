@@ -19,13 +19,13 @@ const AdminBookingsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [deletingBookingId, setDeletingBookingId] = useState(null)
   const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
     checkAuth()
-    fetchBookings()
   }, [])
 
   useEffect(() => {
@@ -33,12 +33,31 @@ const AdminBookingsPage = () => {
   }, [bookings, searchTerm, statusFilter])
 
   const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    try {
+      console.log("[v0] Bookings: Checking authentication...")
+      const response = await fetch("/api/verify-admin")
+
+      if (!response.ok) {
+        console.log("[v0] Bookings: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      const { authenticated } = await response.json()
+      if (!authenticated) {
+        console.log("[v0] Bookings: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      console.log("[v0] Bookings: Authenticated, loading data...")
+      setAuthChecked(true)
+      await fetchBookings()
+    } catch (error) {
+      console.error("[v0] Bookings: Auth check failed:", error)
       router.push("/admin")
-      return
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -48,7 +67,6 @@ const AdminBookingsPage = () => {
     if (!error && data) {
       setBookings(data)
     }
-    setLoading(false)
   }
 
   const filterBookings = () => {
@@ -140,14 +158,14 @@ const AdminBookingsPage = () => {
     })
   }
 
-  if (loading) {
+  if (!authChecked || loading) {
     return (
       <>
         <AdminNavigation />
         <div className="pt-16 min-h-screen flex items-center justify-center bg-card">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading bookings...</p>
+            <p className="mt-4 text-muted-foreground">{!authChecked ? "Verifying access..." : "Loading bookings..."}</p>
           </div>
         </div>
       </>

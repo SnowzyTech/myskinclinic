@@ -36,24 +36,41 @@ const AdminProductsPage = () => {
     image_path: "",
     is_active: true,
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
     checkAuth()
-    fetchProducts()
-    fetchCategories()
-    fetchBrands()
   }, [])
 
   const checkAuth = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    try {
+      console.log("[v0] Products: Checking authentication...")
+      const response = await fetch("/api/verify-admin")
+
+      if (!response.ok) {
+        console.log("[v0] Products: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      const { authenticated } = await response.json()
+      if (!authenticated) {
+        console.log("[v0] Products: Not authenticated, redirecting to login...")
+        router.push("/admin")
+        return
+      }
+
+      console.log("[v0] Products: Authenticated, loading data...")
+      setAuthChecked(true)
+      await Promise.all([fetchProducts(), fetchCategories(), fetchBrands()])
+    } catch (error) {
+      console.error("[v0] Products: Auth check failed:", error)
       router.push("/admin")
-      return
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -218,14 +235,14 @@ const AdminProductsPage = () => {
     }
   }
 
-  if (loading) {
+  if (!authChecked || loading) {
     return (
       <>
         <AdminNavigation />
         <div className="pt-16 min-h-screen flex items-center justify-center bg-card">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading products...</p>
+            <p className="mt-4 text-muted-foreground">{!authChecked ? "Verifying access..." : "Loading products..."}</p>
           </div>
         </div>
       </>
