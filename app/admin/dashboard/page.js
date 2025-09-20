@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope, PenTool, CreditCard } from "lucide-react"
+import { ShoppingBag, Calendar, Package, Briefcase, Stethoscope, PenTool, CreditCard, FileText } from "lucide-react"
 import AdminNavigation from "@/components/admin-navigation"
 
 const AdminDashboard = () => {
@@ -16,10 +16,12 @@ const AdminDashboard = () => {
     totalProducts: 0,
     totalTreatments: 0,
     totalBlogPosts: 0,
+    totalPricelistRequests: 0,
     recentApplications: [],
     recentBookings: [],
     recentOrders: [],
     recentBlogPosts: [],
+    recentPricelistRequests: [],
   })
   const [loading, setLoading] = useState(true)
   const [authChecked, setAuthChecked] = useState(false)
@@ -67,15 +69,23 @@ const AdminDashboard = () => {
 
       console.log("[v0] Fetching dashboard data from Supabase...")
 
-      const [applicationsResult, bookingsResult, ordersResult, productsResult, treatmentsResult, blogPostsResult] =
-        await Promise.allSettled([
-          supabase.from("job_applications").select("*", { count: "exact" }),
-          supabase.from("bookings").select("*", { count: "exact" }),
-          supabase.from("orders").select("*", { count: "exact" }),
-          supabase.from("products").select("*", { count: "exact" }),
-          supabase.from("treatments").select("*", { count: "exact" }),
-          supabase.from("blog_posts").select("*", { count: "exact" }),
-        ])
+      const [
+        applicationsResult,
+        bookingsResult,
+        ordersResult,
+        productsResult,
+        treatmentsResult,
+        blogPostsResult,
+        pricelistRequestsResult,
+      ] = await Promise.allSettled([
+        supabase.from("job_applications").select("*", { count: "exact" }),
+        supabase.from("bookings").select("*", { count: "exact" }),
+        supabase.from("orders").select("*", { count: "exact" }),
+        supabase.from("products").select("*", { count: "exact" }),
+        supabase.from("treatments").select("*", { count: "exact" }),
+        supabase.from("blog_posts").select("*", { count: "exact" }),
+        supabase.from("pricelist_requests").select("*", { count: "exact" }).order("created_at", { ascending: false }),
+      ])
 
       const applications = applicationsResult.status === "fulfilled" ? applicationsResult.value : { data: [], count: 0 }
       const bookings = bookingsResult.status === "fulfilled" ? bookingsResult.value : { data: [], count: 0 }
@@ -83,6 +93,8 @@ const AdminDashboard = () => {
       const products = productsResult.status === "fulfilled" ? productsResult.value : { data: [], count: 0 }
       const treatments = treatmentsResult.status === "fulfilled" ? treatmentsResult.value : { data: [], count: 0 }
       const blogPosts = blogPostsResult.status === "fulfilled" ? blogPostsResult.value : { data: [], count: 0 }
+      const pricelistRequests =
+        pricelistRequestsResult.status === "fulfilled" ? pricelistRequestsResult.value : { data: [], count: 0 }
 
       console.log("[v0] Dashboard data fetched successfully")
 
@@ -93,10 +105,12 @@ const AdminDashboard = () => {
         totalProducts: products.count || 0,
         totalTreatments: treatments.count || 0,
         totalBlogPosts: blogPosts.count || 0,
+        totalPricelistRequests: pricelistRequests.count || 0,
         recentApplications: applications.data?.slice(0, 5) || [],
         recentBookings: bookings.data?.slice(0, 5) || [],
         recentOrders: orders.data?.slice(0, 5) || [],
         recentBlogPosts: blogPosts.data?.slice(0, 5) || [],
+        recentPricelistRequests: pricelistRequests.data?.slice(0, 5) || [],
       })
     } catch (error) {
       console.error("[v0] Error fetching dashboard data:", error)
@@ -107,10 +121,12 @@ const AdminDashboard = () => {
         totalProducts: 0,
         totalTreatments: 0,
         totalBlogPosts: 0,
+        totalPricelistRequests: 0,
         recentApplications: [],
         recentBookings: [],
         recentOrders: [],
         recentBlogPosts: [],
+        recentPricelistRequests: [],
       })
     } finally {
       setLoading(false)
@@ -209,6 +225,17 @@ const AdminDashboard = () => {
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalBlogPosts}</div>
                 <p className="text-xs text-muted-foreground">Published blog posts</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pricelist Requests</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalPricelistRequests}</div>
+                <p className="text-xs text-muted-foreground">Pricelist downloads</p>
               </CardContent>
             </Card>
           </div>
@@ -326,10 +353,26 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link href="/admin/pricelist-requests">
+              <Card className="hover:shadow-lg h-full transition-shadow cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-indigo-100 rounded-lg">
+                      <FileText className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-primary/30">Pricelist Requests</h3>
+                      <p className="text-sm text-gray-600">View pricelist downloads</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
 
           {/* Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 gap-6">
             {/* Recent Applications */}
             <Card>
               <CardHeader>
@@ -421,6 +464,30 @@ const AdminDashboard = () => {
                     ))
                   ) : (
                     <p className="text-gray-500 text-sm">No recent blog posts</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Pricelist Requests */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg text-primary">Recent Pricelist Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {stats.recentPricelistRequests.length > 0 ? (
+                    stats.recentPricelistRequests.map((request) => (
+                      <div key={request.id} className="flex flex-col items-center w-full justify-between">
+                        <div>
+                          <p className="font-medium">{request.name}</p>
+                          <p className="text-sm text-gray-600 truncate">{request.email}</p>
+                        </div>
+                        <Badge variant="outline">{new Date(request.created_at).toLocaleDateString()}</Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">No recent pricelist requests</p>
                   )}
                 </div>
               </CardContent>

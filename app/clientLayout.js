@@ -18,6 +18,9 @@ export default function ClientLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <link rel="prefetch" href="/about" />
         <link rel="prefetch" href="/treatments" />
         <link rel="prefetch" href="/products" />

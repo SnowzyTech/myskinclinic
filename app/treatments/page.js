@@ -6,6 +6,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Clock, Calendar, ShoppingCart, Filter, X } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useCart } from "@/contexts/cart-context"
@@ -21,6 +24,14 @@ const TreatmentsPage = () => {
   const [recommendedProducts, setRecommendedProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [showPricelistForm, setShowPricelistForm] = useState(false)
+  const [pricelistFormData, setPricelistFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  })
+  const [submittingForm, setSubmittingForm] = useState(false)
   const { addItem } = useCart()
   const { toast } = useToast()
   const treatmentsGridRef = useRef(null)
@@ -240,6 +251,70 @@ const TreatmentsPage = () => {
     }, 100)
   }
 
+  const handlePricelistFormChange = (field, value) => {
+    setPricelistFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+  }
+
+  const handlePricelistFormSubmit = async (e) => {
+    e.preventDefault()
+    setSubmittingForm(true)
+
+    try {
+      const { error } = await supabase.from("pricelist_requests").insert([
+        {
+          name: pricelistFormData.name,
+          email: pricelistFormData.email,
+          phone: pricelistFormData.phone,
+          address: pricelistFormData.address,
+          requested_at: new Date().toISOString(),
+        },
+      ])
+
+      if (error) {
+        console.error("Error saving pricelist request:", error)
+      }
+
+      toast({
+        title: "Information Submitted",
+        description: "Thank you! Your pricelist download will begin shortly.",
+      })
+
+      setShowPricelistForm(false)
+
+      setPricelistFormData({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+      })
+
+      setTimeout(() => {
+        const link = document.createElement("a")
+        link.href = "/documents/myskinaesthetics.pdf"
+        link.download = "MySkin-Price-List.pdf"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }, 1000)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      toast({
+        title: "Error",
+        description: "There was an issue submitting your information. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setSubmittingForm(false)
+    }
+  }
+
+  const handlePricelistDownload = () => {
+    setShowPricelistForm(true)
+  }
+
   if (loading) {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center bg-background">
@@ -444,10 +519,9 @@ const TreatmentsPage = () => {
                 Download our comprehensive price list with detailed information on all treatments, packages, and
                 services.
               </p>
-              <a
-                href="/documents/myskinaesthetics.pdf"
-                download="MySkin-Price-List.pdf"
-                className="inline-flex items-center px-8 py-4 bg-background border hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+              <Button
+                onClick={handlePricelistDownload}
+                className="inline-flex items-center px-8 py-4 bg-primary border hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -458,7 +532,7 @@ const TreatmentsPage = () => {
                   />
                 </svg>
                 Download Complete Price List
-              </a>
+              </Button>
             </div>
           </ScrollAnimation>
         </div>
@@ -636,6 +710,96 @@ const TreatmentsPage = () => {
         <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute bottom-10 right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
       </section>
+
+      <Dialog open={showPricelistForm} onOpenChange={setShowPricelistForm}>
+        <DialogContent className="bg-card max-w-md border-border">
+          <DialogHeader>
+            <DialogTitle className="text-card-foreground text-xl text-center">Get Your Price List</DialogTitle>
+            <p className="text-card-foreground/70 text-sm text-center mt-2">
+              Please provide your information to download our comprehensive price list
+            </p>
+          </DialogHeader>
+          <form onSubmit={handlePricelistFormSubmit} className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="name" className="text-card-foreground text-sm">
+                Full Name *
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={pricelistFormData.name}
+                onChange={(e) => handlePricelistFormChange("name", e.target.value)}
+                placeholder="Enter your full name"
+                required
+                className="bg-background border-border"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="email" className="text-card-foreground text-sm">
+                Email Address *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={pricelistFormData.email}
+                onChange={(e) => handlePricelistFormChange("email", e.target.value)}
+                placeholder="Enter your email address"
+                required
+                className="bg-background border-border"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="phone" className="text-card-foreground text-sm">
+                Phone Number *
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={pricelistFormData.phone}
+                onChange={(e) => handlePricelistFormChange("phone", e.target.value)}
+                placeholder="Enter your phone number"
+                required
+                className="bg-background border-border"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="address" className="text-card-foreground text-sm">
+                Address
+              </Label>
+              <Input
+                id="address"
+                type="text"
+                value={pricelistFormData.address}
+                onChange={(e) => handlePricelistFormChange("address", e.target.value)}
+                placeholder="Enter your address (optional)"
+                className="bg-background border-border"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowPricelistForm(false)}
+                className="flex-1 border-border"
+                disabled={submittingForm}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={submittingForm}
+                className="flex-1 bg-primary border hover:bg-primary/90 text-primary-foreground"
+              >
+                {submittingForm ? "Submitting..." : "Download Price List"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
