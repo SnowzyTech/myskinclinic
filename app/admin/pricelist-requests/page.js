@@ -144,7 +144,7 @@ const PricelistRequestsPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
+            <div className="flex-col md:flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-primary/10 flex items-center gap-3">
                   <FileText className="h-8 w-8" />
@@ -152,7 +152,7 @@ const PricelistRequestsPage = () => {
                 </h1>
                 <p className="text-gray-600 mt-2">View and manage customers who have requested your pricelist</p>
               </div>
-              <div className="flex gap-4 border rounded-sm">
+              <div className="flex md:w-full gap-4 border rounded-sm mt-2">
                 <Button onClick={exportToCSV} disabled={filteredRequests.length === 0}>
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
