@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast"
 import ImageUpload from "@/components/image-upload"
 import AdminNavigation from "@/components/admin-navigation"
 import Link from "next/link"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase"
 
 const AdminBlogPage = () => {
   const [posts, setPosts] = useState([])
@@ -30,19 +30,18 @@ const AdminBlogPage = () => {
     slug: "",
     is_published: false,
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 
   useEffect(() => {
     checkAuth()
-    fetchPosts()
   }, [])
 
   const checkAuth = async () => {
     try {
-      console.log("[v0] Blog: Checking JWT authentication...")
+      console.log("[v0] Blog: Checking authentication...")
       const response = await fetch("/api/verify-admin")
 
       if (!response.ok) {
@@ -58,28 +57,22 @@ const AdminBlogPage = () => {
         return
       }
 
-      console.log("[v0] Blog: Authenticated successfully")
+      console.log("[v0] Blog: Authenticated, loading data...")
+      setAuthChecked(true)
+      await fetchPosts()
     } catch (error) {
       console.error("[v0] Blog: Auth check failed:", error)
       router.push("/admin")
+    } finally {
+      setLoading(false)
     }
   }
 
   const fetchPosts = async () => {
-    try {
-      console.log("[v0] Blog: Fetching posts...")
-      const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false })
+    const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false })
 
-      if (error) {
-        console.error("[v0] Blog: Error fetching posts:", error)
-        return
-      }
-
-      console.log("[v0] Blog: Fetched", data?.length || 0, "posts")
-      setPosts(data || [])
-    } catch (error) {
-      console.error("[v0] Blog: Fetch error:", error)
-      setPosts([])
+    if (!error && data) {
+      setPosts(data)
     }
   }
 
@@ -99,7 +92,6 @@ const AdminBlogPage = () => {
         [field]: value,
       }
 
-      // Auto-generate slug when title changes
       if (field === "title") {
         updated.slug = generateSlug(value)
       }
@@ -134,7 +126,6 @@ const AdminBlogPage = () => {
     setLoading(true)
 
     try {
-      // Validate required fields
       if (!formData.title || !formData.content || !formData.excerpt) {
         throw new Error("Please fill in all required fields")
       }
@@ -148,23 +139,29 @@ const AdminBlogPage = () => {
         is_published: formData.is_published,
       }
 
-      let result
       if (editingPost) {
-        result = await supabase.from("blog_posts").update(postData).eq("id", editingPost.id)
+        const { error } = await supabase.from("blog_posts").update(postData).eq("id", editingPost.id)
+
+        if (error) throw error
+
+        toast({
+          title: "Post Updated",
+          description: "Blog post has been successfully updated.",
+        })
       } else {
-        result = await supabase.from("blog_posts").insert([postData])
+        const { error } = await supabase.from("blog_posts").insert([postData])
+
+        if (error) throw error
+
+        toast({
+          title: "Post Created",
+          description: "New blog post has been successfully created.",
+        })
       }
 
-      if (result.error) {
-        throw new Error(result.error.message)
-      }
-
-      toast({
-        title: editingPost ? "Post Updated" : "Post Created",
-        description: editingPost
-          ? "Blog post has been successfully updated."
-          : "New blog post has been successfully created.",
-      })
+      setIsDialogOpen(false)
+      resetForm()
+      fetchPosts()
     } catch (error) {
       console.error("Post save error:", error)
       toast({
@@ -174,9 +171,6 @@ const AdminBlogPage = () => {
       })
     } finally {
       setLoading(false)
-      setIsDialogOpen(false)
-      resetForm()
-      fetchPosts()
     }
   }
 
@@ -200,14 +194,14 @@ const AdminBlogPage = () => {
     try {
       const { error } = await supabase.from("blog_posts").delete().eq("id", postId)
 
-      if (error) {
-        throw new Error(error.message)
-      }
+      if (error) throw error
 
       toast({
         title: "Post Deleted",
         description: "Blog post has been successfully deleted.",
       })
+
+      fetchPosts()
     } catch (error) {
       console.error("Delete error:", error)
       toast({
@@ -215,8 +209,6 @@ const AdminBlogPage = () => {
         description: "Failed to delete post. Please try again.",
         variant: "destructive",
       })
-    } finally {
-      fetchPosts()
     }
   }
 
@@ -224,14 +216,14 @@ const AdminBlogPage = () => {
     try {
       const { error } = await supabase.from("blog_posts").update({ is_published: !post.is_published }).eq("id", post.id)
 
-      if (error) {
-        throw new Error(error.message)
-      }
+      if (error) throw error
 
       toast({
         title: post.is_published ? "Post Unpublished" : "Post Published",
         description: `Blog post has been ${post.is_published ? "unpublished" : "published"}.`,
       })
+
+      fetchPosts()
     } catch (error) {
       console.error("Toggle publish error:", error)
       toast({
@@ -239,8 +231,6 @@ const AdminBlogPage = () => {
         description: "Failed to update post status. Please try again.",
         variant: "destructive",
       })
-    } finally {
-      fetchPosts()
     }
   }
 
@@ -252,12 +242,27 @@ const AdminBlogPage = () => {
     })
   }
 
+  if (!authChecked || loading) {
+    return (
+      <>
+        <AdminNavigation />
+        <div className="pt-16 min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">
+              {!authChecked ? "Verifying access..." : "Loading blog posts..."}
+            </p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <AdminNavigation />
       <div className="md:pt-16 pt-16 min-h-screen bg-background overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
             <div className="flex flex-col gap-4">
               <Link href="/admin/dashboard">
@@ -287,7 +292,6 @@ const AdminBlogPage = () => {
                   <DialogTitle>{editingPost ? "Edit Blog Post" : "Create New Blog Post"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Image Upload */}
                   <ImageUpload
                     currentImage={formData.image_url}
                     onImageChange={handleImageChange}
@@ -371,7 +375,6 @@ const AdminBlogPage = () => {
             </Dialog>
           </div>
 
-          {/* Posts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
               <Card key={post.id} className="overflow-hidden bg-card border-border">
