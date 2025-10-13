@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,9 +12,11 @@ import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { initializePayment } from "@/lib/paystack"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/lib/supabase"
 
 const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice, getTotalItems } = useCart()
+  const [user, setUser] = useState(null)
   const [customerInfo, setCustomerInfo] = useState({
     email: "",
     name: "",
@@ -24,6 +27,22 @@ const CartPage = () => {
   })
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        setUser(user)
+        setCustomerInfo((prev) => ({ ...prev, email: user.email }))
+      }
+    }
+
+    checkAuth()
+  }, [])
 
   const handleQuantityChange = (productId, newQuantity) => {
     updateQuantity(productId, newQuantity)
@@ -38,6 +57,16 @@ const CartPage = () => {
   }
 
   const handleCheckout = async () => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to proceed to checkout.",
+        variant: "destructive",
+      })
+      router.push("/auth/signin?redirect=/cart")
+      return
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     // Validate all required fields
@@ -257,6 +286,7 @@ const CartPage = () => {
                       placeholder="your@email.com"
                       value={customerInfo.email}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                      disabled={!!user}
                       required
                     />
                   </div>
