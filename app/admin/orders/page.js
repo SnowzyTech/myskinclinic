@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Search, Package, Trash2, CreditCard, Building2, AlertCircle } from "lucide-react"
+import { ArrowLeft, Search, Package, Trash2, CreditCard } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import AdminNavigation from "@/components/admin-navigation"
 
@@ -17,7 +17,6 @@ const AdminOrdersPage = () => {
   const [filteredOrders, setFilteredOrders] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState("all")
   const [loading, setLoading] = useState(true)
   const [deletingOrderId, setDeletingOrderId] = useState(null)
   const router = useRouter()
@@ -30,7 +29,7 @@ const AdminOrdersPage = () => {
 
   useEffect(() => {
     filterOrders()
-  }, [orders, searchTerm, statusFilter, paymentMethodFilter])
+  }, [orders, searchTerm, statusFilter])
 
   const checkAuth = async () => {
     try {
@@ -60,23 +59,8 @@ const AdminOrdersPage = () => {
   const fetchOrders = async () => {
     try {
       console.log("[v0] Orders: Fetching orders...")
-      console.log("[v0] Orders: Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
-      console.log("[v0] Orders: Supabase Key exists:", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-
       const { createClient } = await import("@supabase/supabase-js")
       const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-
-      console.log("[v0] Orders: Testing database connection...")
-      const { count, error: countError } = await supabase.from("orders").select("*", { count: "exact", head: true })
-
-      if (countError) {
-        console.error("[v0] Orders: Count query error:", countError)
-      } else {
-        console.log("[v0] Orders: Total orders in database:", count)
-      }
-
-      const timestamp = new Date().getTime()
-      console.log("[v0] Orders: Fetching with timestamp:", timestamp)
 
       const { data, error } = await supabase
         .from("orders")
@@ -85,43 +69,20 @@ const AdminOrdersPage = () => {
           order_items (
             *,
             products (name, image_url)
-          ),
-          manual_payments (*)
+          )
         `)
         .order("created_at", { ascending: false })
 
       if (error) {
         console.error("[v0] Orders: Error fetching orders:", error)
-        console.error("[v0] Orders: Error details:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        })
         setLoading(false)
         return
       }
 
       console.log("[v0] Orders: Fetched", data?.length || 0, "orders")
-      console.log("[v0] Orders: Raw data:", data)
-
-      data?.forEach((order, index) => {
-        console.log(`[v0] Order ${index + 1}:`, {
-          id: order.id,
-          status: order.status,
-          payment_method: order.payment_method,
-          user_email: order.user_email,
-          total_amount: order.total_amount,
-          created_at: order.created_at,
-          manual_payments: order.manual_payments,
-          order_items: order.order_items,
-        })
-      })
-
       setOrders(data || [])
     } catch (error) {
       console.error("[v0] Orders: Fetch error:", error)
-      console.error("[v0] Orders: Error stack:", error.stack)
       setOrders([])
     }
     setLoading(false)
@@ -135,16 +96,13 @@ const AdminOrdersPage = () => {
         (order) =>
           order.user_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
           order.paystack_reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()),
+          order.shipping_address?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.shipping_address?.phone?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
 
     if (statusFilter !== "all") {
       filtered = filtered.filter((order) => order.status === statusFilter)
-    }
-
-    if (paymentMethodFilter !== "all") {
-      filtered = filtered.filter((order) => order.payment_method === paymentMethodFilter)
     }
 
     setFilteredOrders(filtered)
@@ -228,18 +186,6 @@ const AdminOrdersPage = () => {
     })
   }
 
-  const getPaymentMethodIcon = (paymentMethod) => {
-    return paymentMethod === "manual" ? <Building2 className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />
-  }
-
-  const needsPaymentAttention = (order) => {
-    if (order.payment_method === "manual" && order.manual_payments?.length > 0) {
-      const payment = order.manual_payments[0]
-      return payment.payment_status === "pending" && order.status === "pending"
-    }
-    return false
-  }
-
   if (loading) {
     return (
       <>
@@ -310,17 +256,6 @@ const AdminOrdersPage = () => {
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
-
-            <Select value={paymentMethodFilter} onValueChange={setPaymentMethodFilter}>
-              <SelectTrigger className="w-full sm:w-48 bg-card border-border">
-                <SelectValue placeholder="Payment method" />
-              </SelectTrigger>
-              <SelectContent className="bg-background">
-                <SelectItem value="all">All Methods</SelectItem>
-                <SelectItem value="paystack">Online Payment</SelectItem>
-                <SelectItem value="manual">Manual Transfer</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Orders List */}
@@ -334,18 +269,12 @@ const AdminOrdersPage = () => {
                         <CardTitle className="text-base sm:text-lg text-foreground">
                           Order #{order.id.slice(-8)}
                         </CardTitle>
-                        {needsPaymentAttention(order) && (
-                          <AlertCircle
-                            className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 flex-shrink-0"
-                            title="Payment verification needed"
-                          />
-                        )}
                       </div>
                       <p className="text-xs sm:text-sm text-muted-foreground break-all sm:break-normal">
                         {order.user_email}
                       </p>
-                      {order.customer_name && (
-                        <p className="text-xs sm:text-sm text-muted-foreground">{order.customer_name}</p>
+                      {order.shipping_address?.name && (
+                        <p className="text-xs sm:text-sm text-muted-foreground">{order.shipping_address.name}</p>
                       )}
                     </div>
                     <div className="flex flex-col sm:items-end space-y-2">
@@ -365,8 +294,8 @@ const AdminOrdersPage = () => {
                           {order.status}
                         </Badge>
                         <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                          {getPaymentMethodIcon(order.payment_method)}
-                          <span className="capitalize">{order.payment_method}</span>
+                          <CreditCard className="w-4 h-4" />
+                          <span>Paystack</span>
                         </div>
                       </div>
                       <p className="text-xs sm:text-sm text-muted-foreground">{formatDate(order.created_at)}</p>
@@ -400,88 +329,44 @@ const AdminOrdersPage = () => {
                           </div>
                         ))}
                       </div>
-
-                      {/* Manual Payment Info */}
-                      {order.payment_method === "manual" && order.manual_payments?.length > 0 && (
-                        <div className="mt-4 p-3 sm:p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                          <h5 className="font-medium text-sm sm:text-base text-yellow-800 mb-2 flex items-center gap-2">
-                            <Building2 className="w-4 h-4 flex-shrink-0" />
-                            Manual Payment Details
-                          </h5>
-                          <div className="text-xs sm:text-sm text-yellow-700 space-y-1">
-                            <p className="break-words">
-                              <strong>Sender:</strong> {order.manual_payments[0].sender_name}
-                            </p>
-                            <p>
-                              <strong>Amount Paid:</strong> ₦{order.manual_payments[0].amount_paid}
-                            </p>
-                            {order.manual_payments[0].transfer_reference && (
-                              <p className="break-all">
-                                <strong>Reference:</strong> {order.manual_payments[0].transfer_reference}
-                              </p>
-                            )}
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                              <strong>Status:</strong>
-                              <Badge
-                                className="self-start"
-                                variant={
-                                  order.manual_payments[0].payment_status === "approved"
-                                    ? "default"
-                                    : order.manual_payments[0].payment_status === "pending"
-                                      ? "secondary"
-                                      : "destructive"
-                                }
-                              >
-                                {order.manual_payments[0].payment_status}
-                              </Badge>
-                            </div>
-                          </div>
-                          {order.manual_payments[0].payment_status === "pending" && (
-                            <div className="mt-3">
-                              <Link href="/admin/manual-payments">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-yellow-800 border-yellow-300 bg-transparent text-xs sm:text-sm"
-                                >
-                                  Review Payment
-                                </Button>
-                              </Link>
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
 
-                    {/* Customer Details */}
-                    {(order.customer_phone ||
-                      order.customer_address ||
-                      order.customer_city ||
-                      order.customer_state) && (
+                    {/* Shipping Information */}
+                    {order.shipping_address && (
                       <div className="mt-4">
-                        <h4 className="font-semibold text-sm sm:text-base text-foreground mb-3">Customer Details</h4>
+                        <h4 className="font-semibold text-sm sm:text-base text-foreground mb-3">
+                          Shipping Information
+                        </h4>
                         <div className="space-y-2 p-3 sm:p-4 bg-muted/50 rounded-lg">
-                          {order.customer_phone && (
+                          {order.shipping_address.name && (
+                            <div className="flex justify-between items-start gap-2">
+                              <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Name:</span>
+                              <span className="text-xs sm:text-sm text-foreground text-right">
+                                {order.shipping_address.name}
+                              </span>
+                            </div>
+                          )}
+                          {order.shipping_address.phone && (
                             <div className="flex justify-between items-start gap-2">
                               <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Phone:</span>
                               <span className="text-xs sm:text-sm text-foreground text-right">
-                                {order.customer_phone}
+                                {order.shipping_address.phone}
                               </span>
                             </div>
                           )}
-                          {order.customer_address && (
+                          {order.shipping_address.address && (
                             <div className="flex justify-between items-start gap-2">
                               <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Address:</span>
                               <span className="text-xs sm:text-sm text-foreground text-right break-words">
-                                {order.customer_address}
+                                {order.shipping_address.address}
                               </span>
                             </div>
                           )}
-                          {(order.customer_city || order.customer_state) && (
+                          {(order.shipping_address.city || order.shipping_address.state) && (
                             <div className="flex justify-between items-start gap-2">
                               <span className="text-xs sm:text-sm text-muted-foreground flex-shrink-0">Location:</span>
                               <span className="text-xs sm:text-sm text-foreground text-right">
-                                {[order.customer_city, order.customer_state].filter(Boolean).join(", ")}
+                                {[order.shipping_address.city, order.shipping_address.state].filter(Boolean).join(", ")}
                               </span>
                             </div>
                           )}
@@ -502,8 +387,8 @@ const AdminOrdersPage = () => {
                         <div className="flex justify-between items-center">
                           <span className="text-xs sm:text-sm text-muted-foreground">Payment Method:</span>
                           <div className="flex items-center gap-1">
-                            {getPaymentMethodIcon(order.payment_method)}
-                            <span className="capitalize text-xs sm:text-sm">{order.payment_method}</span>
+                            <CreditCard className="w-4 h-4" />
+                            <span className="text-xs sm:text-sm">Paystack</span>
                           </div>
                         </div>
                         {order.paystack_reference && (
@@ -524,49 +409,34 @@ const AdminOrdersPage = () => {
 
                       {/* Status Update Buttons */}
                       <div className="mt-4 space-y-2">
-                        {((order.payment_method === "manual" &&
-                          order.manual_payments?.[0]?.payment_status === "approved") ||
-                          order.payment_method === "paystack") && (
-                          <>
-                            {order.status === "pending" && (
-                              <Button
-                                size="sm"
-                                onClick={() => updateOrderStatus(order.id, "completed")}
-                                className="w-full bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm"
-                              >
-                                Mark as Completed
-                              </Button>
-                            )}
-                            {order.status === "completed" && (
-                              <Button
-                                size="sm"
-                                onClick={() => updateOrderStatus(order.id, "shipped")}
-                                className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm"
-                              >
-                                Mark as Shipped
-                              </Button>
-                            )}
-                            {(order.status === "pending" || order.status === "completed") && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => updateOrderStatus(order.id, "cancelled")}
-                                className="w-full text-red-500 hover:text-red-700 text-xs sm:text-sm"
-                              >
-                                Cancel Order
-                              </Button>
-                            )}
-                          </>
+                        {order.status === "pending" && (
+                          <Button
+                            size="sm"
+                            onClick={() => updateOrderStatus(order.id, "completed")}
+                            className="w-full bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm"
+                          >
+                            Mark as Completed
+                          </Button>
                         )}
-
-                        {order.payment_method === "manual" &&
-                          order.manual_payments?.[0]?.payment_status === "pending" && (
-                            <div className="p-2 sm:p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                              <p className="text-xs sm:text-sm text-yellow-800">
-                                Payment verification required before order can be processed.
-                              </p>
-                            </div>
-                          )}
+                        {order.status === "completed" && (
+                          <Button
+                            size="sm"
+                            onClick={() => updateOrderStatus(order.id, "shipped")}
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm"
+                          >
+                            Mark as Shipped
+                          </Button>
+                        )}
+                        {(order.status === "pending" || order.status === "completed") && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateOrderStatus(order.id, "cancelled")}
+                            className="w-full text-red-500 hover:text-red-700 text-xs sm:text-sm"
+                          >
+                            Cancel Order
+                          </Button>
+                        )}
 
                         <Button
                           size="sm"
@@ -589,9 +459,7 @@ const AdminOrdersPage = () => {
           {filteredOrders.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">
-                {searchTerm || statusFilter !== "all" || paymentMethodFilter !== "all"
-                  ? "No orders found matching your criteria."
-                  : "No orders yet."}
+                {searchTerm || statusFilter !== "all" ? "No orders found matching your criteria." : "No orders yet."}
               </p>
             </div>
           )}

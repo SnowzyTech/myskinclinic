@@ -34,11 +34,11 @@ export async function GET(request, { params }) {
           .single()
 
         if (!existingOrder) {
-          // Extract cart items from payment metadata
+          // Extract cart items and customer info from payment metadata
           const cartItems = data.data.metadata?.cart_items || []
+          const customerInfo = data.data.metadata?.customer_info || {}
           const userEmail = data.data.customer.email
 
-          // Create the order
           const { data: newOrder, error: orderError } = await supabase
             .from("orders")
             .insert({
@@ -46,6 +46,14 @@ export async function GET(request, { params }) {
               total_amount: (data.data.amount / 100).toFixed(2), // Convert from kobo to naira
               status: "completed",
               paystack_reference: reference,
+              shipping_address: {
+                name: customerInfo.name || "",
+                phone: customerInfo.phone || "",
+                address: customerInfo.address || "",
+                city: customerInfo.city || "",
+                state: customerInfo.state || "",
+                email: customerInfo.email || userEmail,
+              },
               created_at: new Date().toISOString(),
             })
             .select()

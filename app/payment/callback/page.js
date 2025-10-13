@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -14,6 +14,7 @@ const PaymentCallbackPage = () => {
   const [paymentData, setPaymentData] = useState(null)
   const [error, setError] = useState(null)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const { clearCart } = useCart()
 
   useEffect(() => {
@@ -22,9 +23,17 @@ const PaymentCallbackPage = () => {
 
   useEffect(() => {
     const reference = searchParams.get("reference")
-    const trxref = searchParams.get("trxref") // Also check for trxref parameter
+    const trxref = searchParams.get("trxref")
+    const paystackReference = searchParams.get("paystack_reference")
 
-    const paymentReference = reference || trxref
+    const paymentReference = reference || trxref || paystackReference
+
+    console.log("[v0] URL search params:", {
+      reference,
+      trxref,
+      paystackReference,
+      allParams: Object.fromEntries(searchParams.entries()),
+    })
 
     if (paymentReference) {
       console.log("[v0] Verifying payment with reference:", paymentReference)
@@ -32,7 +41,7 @@ const PaymentCallbackPage = () => {
     } else {
       console.log("[v0] No payment reference found in URL")
       setStatus("failed")
-      setError("No payment reference found")
+      setError("Transaction reference not found.")
     }
   }, [searchParams])
 

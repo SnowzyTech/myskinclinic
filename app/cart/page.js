@@ -7,16 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Trash2, Plus, Minus, ShoppingBag, CreditCard, Building2 } from "lucide-react"
+import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { initializePayment } from "@/lib/paystack"
 import { useToast } from "@/hooks/use-toast"
 
 const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice, getTotalItems } = useCart()
-  const [customerEmail, setCustomerEmail] = useState("")
+  const [customerInfo, setCustomerInfo] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+  })
   const [loading, setLoading] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState("paystack")
   const { toast } = useToast()
 
   const handleQuantityChange = (productId, newQuantity) => {
@@ -33,10 +39,27 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!customerEmail || !emailRegex.test(customerEmail)) {
+
+    // Validate all required fields
+    if (!customerInfo.email || !emailRegex.test(customerInfo.email)) {
       toast({
         title: "Valid email required",
         description: "Please enter a valid email address to proceed.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (
+      !customerInfo.name ||
+      !customerInfo.phone ||
+      !customerInfo.address ||
+      !customerInfo.city ||
+      !customerInfo.state
+    ) {
+      toast({
+        title: "All fields required",
+        description: "Please fill in all customer information fields.",
         variant: "destructive",
       })
       return
@@ -51,21 +74,6 @@ const CartPage = () => {
       return
     }
 
-    if (paymentMethod === "manual") {
-      localStorage.setItem(
-        "manualCheckoutData",
-        JSON.stringify({
-          items,
-          customerEmail,
-          totalAmount: getTotalPrice(),
-          totalItems: getTotalItems(),
-        }),
-      )
-
-      window.location.href = "/checkout/manual"
-      return
-    }
-
     setLoading(true)
 
     try {
@@ -73,20 +81,20 @@ const CartPage = () => {
       const totalAmount = getTotalPrice()
 
       console.log("[v0] Initializing payment with:", {
-        email: customerEmail,
+        email: customerInfo.email,
         amount: totalAmount,
         reference,
         itemCount: items.length,
       })
 
-      const paymentData = await initializePayment(customerEmail, totalAmount, reference, {
+      const paymentData = await initializePayment(customerInfo.email, totalAmount, reference, {
         cart_items: items.map((item) => ({
           id: item.id,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
         })),
-        customer_email: customerEmail,
+        customer_info: customerInfo,
         total_items: getTotalItems(),
       })
 
@@ -197,7 +205,7 @@ const CartPage = () => {
             ))}
           </div>
 
-          {/* Order Summary */}
+          {/* Order Summary & Customer Info */}
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardContent className="p-6">
@@ -219,9 +227,27 @@ const CartPage = () => {
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <Separator className="my-4" />
+
+                <h3 className="text-lg font-semibold text-primary mb-3">Customer Information</h3>
+                <div className="space-y-3">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name *
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      className="bg-card"
+                      placeholder="John Doe"
+                      value={customerInfo.name}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                       Email Address *
                     </label>
                     <Input
@@ -229,78 +255,83 @@ const CartPage = () => {
                       type="email"
                       className="bg-card"
                       placeholder="your@email.com"
-                      value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      value={customerInfo.email}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Payment Method *</label>
-                    <div className="space-y-2">
-                      {/* <div
-                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                          paymentMethod === "paystack"
-                            ? "border-primary bg-primary/5"
-                            : "border-gray-300 hover:border-gray-400"
-                        }`}
-                        onClick={() => setPaymentMethod("paystack")}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="paystack"
-                            checked={paymentMethod === "paystack"}
-                            onChange={() => setPaymentMethod("paystack")}
-                            className="text-primary"
-                          />
-                          <CreditCard className="w-5 h-5 text-primary" />
-                          <div>
-                            <p className="font-medium text-primary">Online Payment</p>
-                            <p className="text-sm text-gray-600">Pay with card, bank transfer, or USSD</p>
-                          </div>
-                        </div>
-                      </div> */}
-
-                      <div
-                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                          paymentMethod === "manual"
-                            ? "border-primary bg-primary/5"
-                            : "border-gray-300 hover:border-gray-400"
-                        }`}
-                        onClick={() => setPaymentMethod("manual")}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="manual"
-                            checked={paymentMethod === "manual"}
-                            onChange={() => setPaymentMethod("manual")}
-                            className="text-primary"
-                          />
-                          <Building2 className="w-5 h-5 text-primary" />
-                          <div>
-                            <p className="font-medium text-primary">Bank Transfer</p>
-                            <p className="text-sm text-primary-foreground">Manual bank transfer with confirmation</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number *
+                    </label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      className="bg-card"
+                      placeholder="+234 800 000 0000"
+                      value={customerInfo.phone}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                      required
+                    />
                   </div>
 
+                  <div>
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                      Delivery Address *
+                    </label>
+                    <Input
+                      id="address"
+                      type="text"
+                      className="bg-card"
+                      placeholder="123 Main Street"
+                      value={customerInfo.address}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                        City *
+                      </label>
+                      <Input
+                        id="city"
+                        type="text"
+                        className="bg-card"
+                        placeholder="Lagos"
+                        value={customerInfo.city}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, city: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+                        State *
+                      </label>
+                      <Input
+                        id="state"
+                        type="text"
+                        className="bg-card"
+                        placeholder="Lagos"
+                        value={customerInfo.state}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, state: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mt-6">
                   <Button
                     size="lg"
                     className="w-full bg-background hover:bg-card border"
                     onClick={handleCheckout}
                     disabled={loading}
                   >
-                    {loading
-                      ? "Processing..."
-                      : paymentMethod === "manual"
-                        ? "Continue to Bank Transfer"
-                        : "Proceed to Checkout"}
+                    {loading ? "Processing..." : "Proceed to Checkout"}
                   </Button>
 
                   <Button

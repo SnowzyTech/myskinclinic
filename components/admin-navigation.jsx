@@ -4,19 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import {
-  Menu,
-  X,
-  LogOut,
-  Home,
-  Package,
-  Calendar,
-  FileText,
-  Users,
-  Stethoscope,
-  PenTool,
-  CreditCard,
-} from "lucide-react"
+import { Menu, X, LogOut, Home, Package, Calendar, FileText, Users, Stethoscope, PenTool } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 
@@ -115,7 +103,6 @@ const AdminNavigation = () => {
     { name: "Applications", href: "/admin/applications", icon: <Users className="w-4 h-4" /> },
     { name: "Treatments", href: "/admin/treatments", icon: <Stethoscope className="w-4 h-4" /> },
     { name: "Orders", href: "/admin/orders", icon: <FileText className="w-4 h-4" /> },
-    { name: "Manual Payments", href: "/admin/manual-payments", icon: <CreditCard className="w-4 h-4" /> },
     { name: "Blog", href: "/admin/blog", icon: <PenTool className="w-4 h-4" /> },
   ]
 
