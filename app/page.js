@@ -432,24 +432,40 @@ const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, index) => (
               <ScrollAnimation key={product.id} delay={index * 100}>
-                <Card className="h-full text-center hover:shadow-lg transition-all duration-300 bg-card border-border">
-                  <CardContent className="p-6">
-                    <div className="relative h-48 mb-4">
-                      <Image
-                        src={product.image_url || "/placeholder.svg?height=200&width=200&query=skincare product"}
-                        alt={product.name}
-                        fill
-                        className="object-cover rounded-lg"
-                      />
+                <Card className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-card hover:border-primary/40 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out h-full text-left">
+                  {/* Image Container */}
+                  <div className="relative w-full h-80 sm:h-64 bg-white flex items-center justify-center overflow-hidden border-b border-border/10 p-4">
+                    <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/50 to-white pointer-events-none" />
+                    <Image
+                      src={product.image_url || "/placeholder.svg?height=300&width=300&query=skincare product"}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 25vw, 25vw"
+                      className="object-contain p-2 transition-all duration-500 ease-out group-hover:scale-105"
+                      priority
+                    />
+                  </div>
+                  
+                  {/* Card Content */}
+                  <CardContent className="p-5 flex flex-col justify-between flex-grow">
+                    <div className="flex-grow">
+                      <h3 className="text-base font-semibold text-foreground mb-1.5 line-clamp-2 group-hover:text-primary transition-colors duration-300 min-h-[3rem]">
+                        {product.name}
+                      </h3>
+                      <p className="text-muted-foreground text-xs mb-4 line-clamp-2 leading-relaxed">
+                        {product.description}
+                      </p>
                     </div>
-                    <h3 className="font-medium text-foreground mb-2">{product.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{product.description}</p>
-                    <p className="text-xl font-semibold text-primary mb-4">₦{product.price}</p>
-                    <Link href={`/products/${product.id}`}>
-                      <Button size="sm" className="bg-card border hover:bg-primary/90 text-primary-foreground">
-                        VIEW PRODUCT
-                      </Button>
-                    </Link>
+                    
+                    {/* Footer (Price & Action) */}
+                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/30">
+                      <span className="text-lg font-bold text-foreground tracking-tight">₦{product.price?.toLocaleString()}</span>
+                      <Link href={`/products/${product.id}`}>
+                        <Button size="sm" className="h-8 text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all duration-300 rounded-lg shadow-sm px-4">
+                          View Product
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               </ScrollAnimation>

@@ -407,11 +407,15 @@ const AdminProductsPage = () => {
                     <Label htmlFor="is_active">Product is active</Label>
                   </div>
 
-                  <div className="flex justify-end space-x-2 pt-4">
+                   <div className="flex justify-end space-x-2 pt-4">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={loading} className="bg-card border hover:bg-gray-800 text-gray-50">
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-primary border hover:bg-primary/90 text-primary-foreground"
+                    >
                       {loading ? "Saving..." : editingProduct ? "Update Product" : "Add Product"}
                     </Button>
                   </div>

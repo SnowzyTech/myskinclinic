@@ -91,12 +91,15 @@ const ProductDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="space-y-4">
-            <div className="relative aspect-square rounded-lg overflow-hidden bg-white">
+            <div className="relative aspect-square rounded-xl overflow-hidden bg-white border border-border/10 p-8 flex items-center justify-center shadow-md">
+              <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/50 to-white pointer-events-none" />
               <Image
                 src={product.image_url || "/placeholder.svg?height=500&width=500&query=skincare product"}
                 alt={product.name}
                 fill
-                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain p-4"
+                priority
               />
             </div>
           </div>

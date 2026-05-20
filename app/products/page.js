@@ -283,38 +283,52 @@ const ProductsPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map((product, index) => (
                   <ScrollAnimation key={product.id} delay={index * 50}>
-                    <Card className="overflow-hidden h-full hover:shadow-lg transition-all duration-300 bg-card border-border">
-                      <div className="relative h-48">
+                    <Card className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/50 bg-card hover:border-primary/40 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out h-full">
+                      {/* Image Container */}
+                      <div className="relative w-full h-80 sm:h-64 bg-white flex items-center justify-center overflow-hidden border-b border-border/10 p-4">
+                        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/50 to-white pointer-events-none" />
                         <Image
-                          src={product.image_url || "/placeholder.svg?height=200&width=300&query=skincare product"}
+                          src={product.image_url || "/placeholder.svg?height=300&width=300&query=skincare product"}
                           alt={product.name}
                           fill
-                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          className="object-contain p-2 transition-all duration-500 ease-out group-hover:scale-105"
+                          priority
                         />
                       </div>
-                      <CardContent className="p-4">
-                        <div className="mb-2 flex justify-between items-start">
-                          <span className="text-xs text-primary font-medium">{product.categories?.name}</span>
-                          {product.brands && (
-                            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                              {product.brands.name}
-                            </span>
-                          )}
+                      
+                      {/* Card Info */}
+                      <CardContent className="p-5 flex flex-col justify-between flex-grow">
+                        <div className="flex-grow">
+                          <div className="mb-2 flex justify-between items-center text-[10px] tracking-wider uppercase font-semibold">
+                            <span className="text-primary">{product.categories?.name}</span>
+                            {product.brands && (
+                              <span className="text-muted-foreground bg-muted/60 px-2 py-0.5 rounded border border-border/20">
+                                {product.brands.name}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-base font-semibold text-foreground mb-1.5 line-clamp-2 group-hover:text-primary transition-colors duration-300 min-h-[3rem]">
+                            {product.name}
+                          </h3>
+                          <p className="text-muted-foreground text-xs mb-4 line-clamp-2 leading-relaxed">
+                            {product.description}
+                          </p>
                         </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2">{product.name}</h3>
-                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{product.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-primary">₦{product.price?.toLocaleString()}</span>
+                        
+                        {/* Footer (Price & Actions) */}
+                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/30">
+                          <span className="text-lg font-bold text-foreground tracking-tight">₦{product.price?.toLocaleString()}</span>
                           <div className="flex gap-2">
                             <Link href={`/products/${product.id}`}>
-                              <Button variant="outline" size="sm" className="text-primary bg-card">
+                              <Button variant="outline" size="sm" className="h-8 text-xs text-primary border-primary/30 hover:border-primary hover:bg-primary hover:text-primary-foreground bg-transparent font-medium transition-all duration-300">
                                 View
                               </Button>
                             </Link>
                             <Button
                               size="sm"
                               onClick={() => handleAddToCart(product)}
-                              className="bg-background border hover:bg-primary/90 text-primary-foreground"
+                              className="h-8 w-8 p-0 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 rounded-lg shadow-sm flex items-center justify-center"
                             >
                               <ShoppingCart className="w-4 h-4" />
                             </Button>

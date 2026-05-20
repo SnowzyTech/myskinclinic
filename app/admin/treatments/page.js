@@ -496,7 +496,7 @@ const AdminTreatmentsPage = () => {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="bg-background border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
+                      className="bg-primary border hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
                     >
                       {loading ? "Saving..." : editingTreatment ? "Update Treatment" : "Add Treatment"}
                     </Button>
